@@ -1,0 +1,142 @@
+/* Container styling */
+.confirm-slot-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  margin-left: 50px;
+}
+
+h1 {
+  text-align: left;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Doctor Info Card */
+.doctor-info-card {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.doctor-info-card img {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.doctor-details {
+  display: flex;
+  flex-direction: column; /* Stack the name and profession vertically */
+  align-items: flex-start; /* Align them to the left */
+}
+
+.doctor-details h2 {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.doctor-details p {
+  color: #00d374;
+  font-size: 16px;
+  margin-right: -50px;
+}
+warning p {
+  margin: 5px 0 0 0;
+  color: red;
+  font-weight: bold;
+  margin-right: 50px;
+}
+
+.appointment-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; 
+  margin-left: 600px; 
+}
+
+.time-slot p, .time-warning p {
+  text-align: right; 
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.time-warning p {
+  color: red;
+  white-space: nowrap;
+}
+
+.time-warning span {
+  color: #ff6666;
+}
+
+.time-warning span {
+  color: #ff6666;
+}
+
+/* Form styling */
+.patient-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+/* Input fields */
+input, select {
+  width: 100%; /* Ensure inputs take full width */
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="file"] {
+  padding: 5px;
+}
+
+/* Adjust flexbox layout on smaller screens */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+/* Buttons */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.go-back-button, .submit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.go-back-button {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.submit-button {
+  background-color: #00d374;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #00b15e;
+}

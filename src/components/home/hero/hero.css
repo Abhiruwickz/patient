@@ -1,0 +1,70 @@
+.hero-section {
+  display: flex;
+  justify-content: flex-start; /* Align content to the left */
+  align-items: center; /* Vertically center the content */
+  padding: 50px;
+  background-color: #f7f9fb;
+  position: relative;
+  height: 87.8vh;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 85%;
+  height: 100%;
+  background-image: url('../../assets/1.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.hero-content {
+  max-width: 600px;
+  z-index: 2;
+  text-align: left; /* Align all text to the left */
+}
+
+.hero-content h1 {
+  font-size: 36px;
+  color: #000;
+  line-height: 1.2; 
+  white-space: pre-line;
+  text-align: left; /* Ensure the heading is left-aligned */
+  margin-right: 0; /* Remove right margin */
+  margin-bottom: 20px; /* Space below heading */
+}
+
+.hero-content p {
+  font-size: 18px;
+  margin: 20px 0;
+  text-align: left; /* Align paragraph to the left */
+}
+
+.hero-stats {
+  display: flex;
+  flex-direction: column; /* Arrange stats vertically */
+  align-items: flex-start; /* Align stats to the left */
+  margin-top: 30px; /* Space between the stats and button */
+}
+
+.hero-stats div {
+  text-align: left; /* Align each stat text to the left */
+  margin-bottom: 20px; /* Space between stat blocks */
+}
+
+.appointment-btn {
+  padding: 10px 30px;
+  background-color: #00bfa6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 40px; /* Space between stats and button */
+  align-self: flex-start; /* Align the button to the left */
+}

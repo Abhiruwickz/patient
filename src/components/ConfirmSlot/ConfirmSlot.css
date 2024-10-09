@@ -1,0 +1,179 @@
+/* Container styling */
+.confirm-slot-container {
+  margin-right: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+h1 {
+  text-align: left;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.confirm-slot-logo h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.confirm-slot-nav-icons i {
+  font-size: 24px;
+  margin-left: 20px;
+}
+
+/* Content section */
+.confirm-slot-content {
+  margin-top: 20px;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  margin-left: 100px;
+}
+
+/* Doctor Info Card */
+.doctor-info-card {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+}
+
+.doctor-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.doctor-details h2 {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.doctor-details p {
+  color: #00d374;
+  font-size: 16px;
+  margin-left: 118px;
+}
+
+.appointment-summary {
+  text-align: right;
+  margin-left: 500px; 
+  text-align: right;
+  white-space: nowrap;
+}
+
+.appointment-warning {
+  color: red;
+  font-size: 12px;
+  text-align: right;
+
+}
+
+.appointment-time-left {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+  margin-left: 50px;
+  text-align: right;
+}
+
+
+/* Personal details styling */
+.patient-details {
+  margin-bottom: 20px;
+}
+
+h4 {
+  color: #002b5c;
+  margin-right: 510px;
+}
+
+p {
+  margin-right: 510px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+/* Appointment details styling */
+.appointment-details {
+  margin-bottom: 20px;
+  margin-right: 1300px;
+  
+
+}
+
+
+/* Terms & Conditions styling */
+.terms-and-conditions {
+  margin-bottom: 20px;
+}
+
+.terms-and-conditions ul {
+  padding-left: 20px;
+}
+
+.terms-and-conditions li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.accept-terms {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-right: 800px;
+}
+
+.accept-terms input {
+  margin-right: 1200px;
+
+}
+.accept{
+  margin-top: 10px;
+  color: #000;
+  font-style: italic;
+}
+
+/* Buttons styling */
+.confirm-slot-buttons {
+  display: flex;
+  flex-direction: column; /* Align buttons vertically */
+  justify-content: left;
+  gap: 10px; /* Adds space between buttons */
+}
+
+.confirm-appointment-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  width: 200px;
+}
+
+.confirm-appointment-button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.go-back-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px; 
+  width: 100px;
+}

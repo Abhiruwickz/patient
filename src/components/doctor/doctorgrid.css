@@ -1,0 +1,80 @@
+.doctor-grid {
+  padding: 50px;
+  text-align: center;
+  background-color: #f7f9fb;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.doctor-grid h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  margin-left: -270px;
+}
+
+.doctor-grid p {
+  font-size: 18px;
+  margin-bottom: 40px;
+  text-align: center; 
+  margin-left: 200px;
+
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 20px; /* Space between cards */
+}
+
+.category {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.category h3 {
+  font-size: 18px;
+  color: #00a896;
+  margin-bottom: 20px;
+}
+
+.doctors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Create a responsive grid */
+  gap: 20px; /* Space between doctor cards */
+  margin-top: 20px;
+  margin-right: -170px;
+}
+
+.doctor-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  height: 120px;
+  width: 100%;
+  
+  
+}
+
+p {
+  margin-right: 510px;
+  margin-top: 10px;
+  text-align: left;
+}
+.specialization-filter{
+  width: 150px;
+  margin-top: 20px;
+  text-align: center;
+  margin-left: 1000px;
+  
+}
+img {
+  overflow-clip-margin: content-box;
+  overflow:clip;
+  width: 50px;
+}

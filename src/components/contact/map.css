@@ -1,0 +1,34 @@
+.map-section {
+  padding: 50px;
+  text-align: center;
+  width: 1300px;
+  margin-top: 0px;
+  margin-left: -73px;
+}
+
+.gmap-frame {
+  margin: 0 auto;
+  width: 1300px;
+  height: 550px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  transform: translateX(50px); 
+}
+  
+  .map-section h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .map-section p {
+    color: #00a99d;
+  }
+  
+  .map-image {
+    margin-top: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    width: 80px;
+    
+  }
+  

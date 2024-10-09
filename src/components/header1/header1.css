@@ -1,0 +1,48 @@
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #0f3d60;
+  color: white;
+  border-bottom: 3px solid #007bff;
+  height: 80px;
+  margin-top: -20px;
+  width: 1366px;
+  margin-left: -70px;
+  
+}.header1 {
+  /* Add your header styles here */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff; /* Example background color */
+}
+
+.logo img {
+  height: 50px; /* Adjust logo size as needed */
+}
+
+.header-icons {
+  display: flex;
+}
+
+.notification-icon,
+.user-icon {
+  margin-left: 20px; /* Spacing between icons */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+
+.logo1 {
+  width: 50px;
+  color: #00d374;
+  margin-top: 200px;
+}
+
+.img {
+  width: 50px;
+  margin-left: -10px;
+}

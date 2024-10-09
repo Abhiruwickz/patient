@@ -1,0 +1,22 @@
+.info-section {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: white;
+    margin-left: 200px;
+    
+  }
+  
+  .contact-card {
+    background-color: #f1f1f1;
+    padding: 20px;
+    width: 30%;
+    text-align: center;
+    border-radius: 10px;
+  }
+  
+  .contact-card h3 {
+    color: #00a99d;
+    margin-bottom: 10px;
+  }
+  
