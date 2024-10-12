@@ -1,3 +1,4 @@
+/* Hero Section CSS */
 .hero-section {
   display: flex;
   justify-content: flex-start; /* Align content to the left */
@@ -21,8 +22,9 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: 1;
   z-index: -1;
+  
 }
 
 .hero-content {
@@ -33,12 +35,15 @@
 
 .hero-content h1 {
   font-size: 36px;
-  color: #000;
+  color: #ffffff;
   line-height: 1.2; 
   white-space: pre-line;
   text-align: left; /* Ensure the heading is left-aligned */
   margin-right: 0; /* Remove right margin */
   margin-bottom: 20px; /* Space below heading */
+  background-image: url('../../assets/backHero.jpg');
+  opacity: 0.5;
+  width: 400px;
 }
 
 .hero-content p {
@@ -47,24 +52,47 @@
   text-align: left; /* Align paragraph to the left */
 }
 
-.hero-stats {
-  display: flex;
-  flex-direction: column; /* Arrange stats vertically */
-  align-items: flex-start; /* Align stats to the left */
-  margin-top: 30px; /* Space between the stats and button */
-}
-
-.hero-stats div {
-  text-align: left; /* Align each stat text to the left */
-  margin-bottom: 20px; /* Space between stat blocks */
-}
-
+/* Updated Appointment Button CSS */
 .appointment-btn {
   padding: 10px 30px;
   background-color: #00bfa6;
   color: white;
   border: none;
   cursor: pointer;
-  margin-top: 40px; /* Space between stats and button */
-  align-self: flex-start; /* Align the button to the left */
+  position: absolute; /* Position it relative to the .hero-section */
+  bottom: 20px; /* Distance from the bottom of the container */
+  left: -800px; /* Reset to the intended distance from the left */
+  z-index: 2; /* Ensure it stays above the background and other elements */
+}
+
+/* Updated Hero Stats CSS */
+.hero-stats {
+  display: flex;
+  flex-direction: row; /* Arrange stats horizontally */
+  align-items: center; /* Vertically align the stats */
+  position: absolute; /* Position it relative to the .hero-section */
+  bottom: 20px; /* Distance from the bottom of the container */
+  right: 400px; /* Shift 100px to the left by changing the right value */
+  background-image: url('../../assets/backHero.jpg');
+  opacity: 0.5;
+  height: 80px;
+}
+
+.hero-stats .years,
+.hero-stats .satisfaction {
+  margin: 0 20px; /* Space between the stats */
+}
+
+.hero-stats .years h3,
+.hero-stats .satisfaction h3 {
+  font-size: 24px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.hero-stats .years p,
+.hero-stats .satisfaction p {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #f7f0f0;
 }

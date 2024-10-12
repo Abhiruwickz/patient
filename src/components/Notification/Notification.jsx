@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore"; 
+import { collection, getDocs, query, orderBy, updateDoc, doc } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom"; 
 import { db } from "../../firebaseConfig"; 
 import "./Notification.css";
@@ -11,34 +11,47 @@ const Notification = () => {
   const [isUnreadTab, setIsUnreadTab] = useState(true); // State for tab switching
   const navigate = useNavigate(); 
 
+  // Fetch notifications function
+  const fetchNotifications = async () => {
+    setLoading(true); // Show loading state
+    try {
+      const notificationsCollection = collection(db, "Notifications");
+      const notificationsQuery = query(
+        notificationsCollection,
+        orderBy("createdAt", "desc")
+      ); 
+      const notificationsSnapshot = await getDocs(notificationsQuery);
+
+      const notificationsData = notificationsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setNotifications(notificationsData);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch notifications on component mount
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const notificationsCollection = collection(db, "Notifications");
-        const notificationsQuery = query(
-          notificationsCollection,
-          orderBy("createdAt", "desc")
-        ); 
-        const notificationsSnapshot = await getDocs(notificationsQuery);
-
-        const notificationsData = notificationsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setNotifications(notificationsData);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchNotifications();
   }, []);
 
-  const handleNotificationClick = (notification) => {
+  const handleNotificationClick = async (notification) => {
     setSelectedNotification(notification); 
+    // Mark notification as read in Firestore
+    try {
+      await updateDoc(doc(db, "Notifications", notification.id), {
+        unread: false, // Set unread to false
+      });
+      // Refresh notifications to update state
+      fetchNotifications(); // Re-fetch notifications after updating
+    } catch (error) {
+      console.error("Error updating notification:", error);
+    }
   };
 
   const handleBackToNotifications = () => {

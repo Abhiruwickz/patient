@@ -1,0 +1,105 @@
+/* Footer.css */
+
+.footer-container {
+  background-color: #2e67f8; /* Background color */
+  color: white; /* Text color */
+  display: flex; /* Flexbox for layout */
+  justify-content: space-between; /* Space between sections */
+  padding: 40px; /* Padding around the footer */
+  font-family: Arial, sans-serif; /* Font family */
+  border-top: 5px solid white; /* Top border for visual separation */
+  width: 1350px;
+}
+
+.footer-section {
+  flex: 1; /* Equal space for each section */
+  margin: 0 20px; /* Margin for spacing */
+  background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
+  padding: 20px; /* Padding within each section */
+   width: 300px;
+  height: 500px;
+}
+
+.footer-title {
+  font-size: 16px; /* Title size */
+  font-weight: bold; /* Title boldness */
+  margin-bottom: 10px; /* Space below title */
+}
+
+.footer-description {
+  font-size: 12px; /* Font size for readability */
+  margin-top: 20px; /* Space above description */
+  line-height: 1.6; /* Line height for comfortable reading */
+  text-align: justify; /* Justify text to fill the line width */
+  
+}
+
+
+
+.footer-subtitle {
+  font-size: 16px; /* Subtitle size */
+  font-weight: bold; /* Subtitle boldness */
+  margin-bottom: 5px; /* Space below subtitle */
+}
+
+.footer-contact-header {
+  font-size: 16px; /* Contact header size */
+  font-weight: bold; /* Header boldness */
+}
+
+.footer-contact {
+  font-size: 11px; /* General contact size */
+  margin: 5px 0; /* Vertical spacing */
+}
+
+.footer-phone {
+  font-size: 11px; /* Phone number size */
+  margin: 2px 0; /* Vertical spacing */
+}
+.footer-E{
+  font-size: 11px; /* General contact size */
+  margin: 5px 0;
+  margin-left: 140px;
+  margin-top: -45px;
+}
+
+.footer-email {
+  color: white; /* Email color */
+  text-decoration: none;
+   /* No underline */
+}
+
+.footer-email:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+.footer-follow {
+  margin-top: 15px; /* Space above follow text */
+  font-size: 16px; /* Follow text size */
+  font-weight: bold; /* Follow text boldness */
+}
+
+.footer-icons {
+  display: flex; 
+  gap: 15px; /* Space between icons */
+  margin-top: 5px;
+  /* Space above icons */
+}
+
+.footer-icon {
+  background-color: white; /* Icon background */
+  color: #2e67f8; /* Icon text color */
+  border-radius: 50%; /* Round shape */
+  width: 40px; /* Icon size */
+  height: 40px; /* Icon size */
+  display: flex; /* Flexbox for center alignment */
+  align-items: center; /* Vertical alignment */
+  justify-content: center; /* Horizontal alignment */
+  font-weight: bold; /* Icon text boldness */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Transition effect */
+}
+
+.footer-icon:hover {
+  background-color: #ffffff; /* Icon hover background */
+}

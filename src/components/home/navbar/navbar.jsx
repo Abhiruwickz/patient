@@ -37,14 +37,7 @@ const Navbar = () => {
         <Link to="/about">About Us</Link> {/* Link to About page */}
         <Link to="/map">Contact Us</Link> {/* Link to Contact/Map page */}
       </div>
-      
-      <div className="noti-icon" onClick={handleNotificationClick}>
-        <img src={noicon} alt="Notification" />
-      </div>
-      <div className="us-icon" onClick={handleUserClick}>
-        <img src={userIcon} alt="User" />
-      </div>
-      
+
       <div className="navbar-buttons">
         {userEmail ? (
           <span className="welcome-text">Hi {userEmail}</span> // Display the logged-in user's email
@@ -53,6 +46,13 @@ const Navbar = () => {
             <button className="login-btn">Login</button>
           </Link>
         )}
+
+        <div className="noti-icon" onClick={handleNotificationClick}>
+          <img src={noicon} alt="Notification" />
+        </div>
+        <div className="us-icon" onClick={handleUserClick}>
+          <img src={userIcon} alt="User" />
+        </div>
       </div>
     </nav>
   );

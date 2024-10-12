@@ -1,39 +1,36 @@
 .welcome-section {
-    text-align: center;
-    padding: 50px;
-    background-color: #f9f9f9;
-  }
+  text-align: center;
+  padding: 50px;
+  background-color: #f9f9f9;
+}
+
+.welcome-title {
+  font-size: 36px;
+  color: #1B3C7D;
+  margin-left: 400px;
+}
+
+.welcome-title .welcome-mediconnect {
+  color: #20b2aa;
   
-  .welcome-section h1 {
-    font-size: 36px;
-    color: #333;
-    margin-left: 400px;
-  }
-  
-  .welcome-section h1 .mediconnect {
-    color: #20b2aa;
-  }
-  
-  .welcome-section h2 {
-    font-size: 24px;
-    color: #666;
-    margin: 10px 0;
-    margin-right: 350px;
-  }
-  
-  .welcome-section h3 {
-    font-size: 20px;
-    color: #020202;
-    margin: 5px 0;
-    margin-right: 290px;
-  }
-  
-  .welcome-section .description {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.8;
-    margin: 20px auto;
-    max-width: 600px;
-    margin-left:330px;
-  }
-  
+}
+
+.welcome-subtitle {
+  font-size: 36px;
+  color: #1B3C7D;
+  margin: 10px 0;
+  margin-right: 350px;
+}
+
+.welcome-subtitle-span {
+  color: #333;
+}
+
+.welcome-description {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.8;
+  margin: 20px auto;
+  max-width: 600px;
+  margin-left: 330px;
+}

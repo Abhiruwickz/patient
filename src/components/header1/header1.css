@@ -1,48 +1,50 @@
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #0f3d60;
-  color: white;
-  border-bottom: 3px solid #007bff;
-  height: 80px;
-  margin-top: -20px;
-  width: 1366px;
+/* Header.css */
+
+.header-container {
+  display: flex; /* Flexbox for layout */
+  justify-content: space-between; /* Space out items */
+  align-items: center; /* Center vertically */
+  background-color: #1f3e85; /* Background color of the header */
+  padding: 10px 20px; /* Padding inside the header */
+  width: 1353px; /* Full width */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
   margin-left: -70px;
-  
-}.header1 {
-  /* Add your header styles here */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #fff; /* Example background color */
+  margin-top: -20px;
+  height: 65px;
 }
 
-.logo img {
-  height: 50px; /* Adjust logo size as needed */
+.header-logo {
+  flex: 1; /* Take up space */
 }
 
-.header-icons {
-  display: flex;
+.logo-image {
+  width: 40px; /* Logo size */
+  height: auto; /* Maintain aspect ratio */
 }
 
-.notification-icon,
-.user-icon {
-  margin-left: 20px; /* Spacing between icons */
-  cursor: pointer; /* Change cursor to pointer on hover */
+.header-title {
+  flex: 2; /* More space for the title */
+  text-align: center; /* Center the title */
+  font-size: 20px; /* Font size for the title */
+  font-weight: bold; /* Make the title bold */
+  color: white; /* Text color */
 }
 
-
-.logo1 {
-  width: 50px;
-  color: #00d374;
-  margin-top: 200px;
+.brand-name {
+  color: #ffffff; /* Default brand name color */
 }
 
-.img {
-  width: 50px;
-  margin-left: -10px;
+.highlight {
+  color: #4aa0ff; /* Highlight color for 'Connect' */
+}
+
+.header-icon {
+  flex: 1; /* Take up space */
+  text-align: right; /* Align the icon to the right */
+}
+
+.bell-icon {
+  font-size: 24px; /* Size of the bell icon */
+  color: #000000; /* Color of the bell icon */
+  cursor: pointer; /* Pointer cursor on hover */
 }

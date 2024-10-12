@@ -48,7 +48,7 @@ const DoctorSchedule = () => {
 
         // Fetch schedule data
         const scheduleCollectionRef = collection(db, "schedule");
-        const scheduleQuery = query(scheduleCollectionRef, where("doctor Id", "==", doctorId));
+        const scheduleQuery = query(scheduleCollectionRef, where("doctorId", "==", doctorId));
         const scheduleSnapshot = await getDocs(scheduleQuery);
 
         if (scheduleSnapshot.empty) {
@@ -102,17 +102,19 @@ const DoctorSchedule = () => {
     <div className="container">
       <Header />
       <div className="doctor-card">
-        <img
-          className="doctor-img"
-          src={doctorPhotoUrl}  // Use the state for doctor's photo URL
-          alt={doctorName}
-        />
+        
         <div className="doctor-info">
           <h2>{doctorName}</h2>
+          <div className="separator-line"></div>
           <p>{doctorSpecialization}</p>
           <h3>{doctorStatus}</h3>
         </div>
       </div>
+      <img
+          className="doctor-img"
+          src={doctorPhotoUrl}  // Use the state for doctor's photo URL
+          alt={doctorName}
+        />
       <div className="appointment-table">
         <table>
           <thead>

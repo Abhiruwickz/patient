@@ -29,7 +29,10 @@ function Confirm() {
 
         if (appointmentsData.length > 0) {
           const latestAppointment = appointmentsData[0];
-          setAppointmentNumber(latestAppointment.appointmentNumber || 'N/A');
+          // Extract the last 4 digits from the appointment number
+          const extractedAppointmentNumber = latestAppointment.appointmentNumber?.slice(-4) || 'N/A';
+
+          setAppointmentNumber(extractedAppointmentNumber);
           setPersonalDetails(latestAppointment || {});
           setAppointmentDetails({
             doctorImage: latestAppointment.doctorPhotoUrl || 'path/to/placeholder-image.jpg',
@@ -96,7 +99,7 @@ function Confirm() {
           visitingTime: appointmentDetails.visitingTime,
           patientDetails: { // Store patient details as an object
             name: personalDetails.patientName || 'N/A',
-            phone: personalDetails.contactNo || 'N/A',
+            phone: personalDetails.phone || 'N/A',
             nic: personalDetails.nic || 'N/A',
             email: personalDetails.email || 'N/A',
             dob: personalDetails.dob || 'N/A',
@@ -168,7 +171,7 @@ function Confirm() {
             <>
               <p><strong>Reference No:</strong> {appointmentNumber || 'N/A'}</p>
               <p><strong>Patient's Name:</strong> {personalDetails.patientName || 'N/A'}</p>
-              <p><strong>Phone Number:</strong> {personalDetails.contactNo || 'N/A'}</p>
+              <p><strong>Phone Number:</strong> {personalDetails.phone || 'N/A'}</p>
               <p><strong>NIC:</strong> {personalDetails.nic || 'N/A'}</p>
               <p><strong>Email:</strong> {personalDetails.email || 'N/A'}</p>
               <p><strong>DOB:</strong> {personalDetails.dob || 'N/A'}</p>
@@ -198,26 +201,14 @@ function Confirm() {
             <li>Appointment times may change without notice.</li>
             <li>Payment will not be refunded except in certain cases.</li>
           </ul>
-        </div>
-
-        <div className="accept-terms">
           <label>
-            <input
-              type="checkbox"
-              checked={accepted}
-              onChange={handleAcceptTerms}
-            />
-            I agree to the terms and conditions.
+            <input type="checkbox" checked={accepted} onChange={handleAcceptTerms} /> Accept Terms & Conditions
           </label>
         </div>
 
-        <div className="confirm-buttons">
-          <button className="confirm-button" onClick={handleConfirmAppointment}>
-            Confirm Appointment
-          </button>
-        </div>
+        <button onClick={handleConfirmAppointment} className="confirm-appointment-btn">CONFIRM</button>
 
-        {message && <p className="message">{message}</p>}
+        {message && <p className="confirmation-message">{message}</p>}
       </div>
     </div>
   );
