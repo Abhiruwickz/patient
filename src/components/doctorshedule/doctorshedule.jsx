@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-import "./doctorshedule.css";
+import "./doctorshedule.css";  // Updated CSS import
 import Footer from "../footer/footer";
 import Header from "../header1/header1";
 
@@ -13,9 +13,10 @@ const DoctorSchedule = () => {
   const [doctorName, setDoctorName] = useState("");
   const [doctorSpecialization, setDoctorSpecialization] = useState("");
   const [doctorStatus, setDoctorStatus] = useState(null);
-  const [doctorPhotoUrl, setDoctorPhotoUrl] = useState("");  // State for doctor's photo URL
+  const [doctorPhotoUrl, setDoctorPhotoUrl] = useState("");
 
-  const doctorId = location.state?.doctorId || '';
+  // Get the doctorId from the location state
+  const doctorId = location.state?.doctorId || ''; // Default to empty string if not found
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +36,7 @@ const DoctorSchedule = () => {
           setDoctorName("Dr. Unknown");
           setDoctorSpecialization("Specialization Unknown");
           setDoctorStatus("inactive");
-          setDoctorPhotoUrl("default_image_url");  // Set default image URL if doctor is not found
+          setDoctorPhotoUrl("default_image_url");
           setScheduleData([]);
           return;
         }
@@ -44,12 +45,11 @@ const DoctorSchedule = () => {
         setDoctorName(doctor.doctorName || "Dr. Unknown");
         setDoctorSpecialization(doctor.specialization || "Specialization Unknown");
         setDoctorStatus(doctor.status ? doctor.status.toLowerCase() : "inactive");
-        setDoctorPhotoUrl(doctor.photo || "default_image_url");  // Set photo URL from Firestore or use default
+        setDoctorPhotoUrl(doctor.photo || "default_image_url");
 
-        // Fetch schedule data
-        const scheduleCollectionRef = collection(db, "schedule");
-        const scheduleQuery = query(scheduleCollectionRef, where("doctorId", "==", doctorId));
-        const scheduleSnapshot = await getDocs(scheduleQuery);
+        // Fetch schedule data using the correct path
+        const scheduleCollectionRef = collection(db, `schedule/${doctorId}/schedules`);
+        const scheduleSnapshot = await getDocs(scheduleCollectionRef);
 
         if (scheduleSnapshot.empty) {
           console.error("No schedule data found for doctorId:", doctorId);
@@ -57,15 +57,13 @@ const DoctorSchedule = () => {
           return;
         }
 
-        const schedule = scheduleSnapshot.docs.map(doc => doc.data());
-        console.log("Fetched schedule data:", schedule); // Log fetched data
-
-        const updatedSchedule = schedule.map(item => ({
-          ...item,
-          isFull: item.status === 'full',
-          appointmentDate: item.appointmentDate || 'No Date',
-          visitingTime: item.visitingTime || 'No Time',
-          status: item.status || 'Unknown'
+        const updatedSchedule = scheduleSnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id, // Add the schedule ID here
+          isFull: doc.data().status === 'full',
+          appointmentDate: doc.data().appointmentDate || 'No Date',
+          visitingTime: doc.data().visitingTime || 'No Time',
+          status: doc.data().status || 'Unknown'
         }));
 
         setScheduleData(updatedSchedule);
@@ -77,45 +75,42 @@ const DoctorSchedule = () => {
     fetchData();
   }, [doctorId, navigate]);
 
-  const handleBookNow = async (visitingTime, appointmentDate) => {
+  const handleBookNow = async (visitingTime, appointmentDate, scheduleId) => {
     try {
-      // Save booking details to Firestore, including doctor image URL
       await addDoc(collection(db, "Bookings"), {
         doctorName: doctorName,
         doctorSpecialization: doctorSpecialization,
         appointmentDate: appointmentDate,
         visitingTime: visitingTime,
-        doctorPhotoUrl: doctorPhotoUrl, // Save the doctor's photo URL
-        createdAt: serverTimestamp() // Save the current timestamp
+        doctorPhotoUrl: doctorPhotoUrl,
+        scheduleId: scheduleId, // Pass scheduleId here
+        createdAt: serverTimestamp()
       });
 
       console.log("Booking saved successfully!");
-      
-      // Navigate to confirm time slot or another page after successful booking
-      navigate('/confirm-time-slot', { state: { visitingTime, appointmentDate } });
+      navigate('/confirm-time-slot', { state: { visitingTime, appointmentDate, scheduleId } });
     } catch (error) {
       console.error("Error saving booking details:", error);
     }
   };
 
   return (
-    <div className="container">
+    <div className="doctor-schedule-container">
       <Header />
-      <div className="doctor-card">
-        
-        <div className="doctor-info">
+      <div className="doctor-schedule-card">
+        <div className="doctor-schedule-info">
           <h2>{doctorName}</h2>
-          <div className="separator-line"></div>
+          <div className="doctor-schedule-separator-line"></div>
           <p>{doctorSpecialization}</p>
-          <h3>{doctorStatus}</h3>
+          <h3 className="doctor-schedule-h3">{doctorStatus}</h3>
         </div>
       </div>
       <img
-          className="doctor-img"
-          src={doctorPhotoUrl}  // Use the state for doctor's photo URL
-          alt={doctorName}
-        />
-      <div className="appointment-table">
+        className="doctor-schedule-img"
+        src={doctorPhotoUrl}
+        alt={doctorName}
+      />
+      <div className="doctor-schedule-appointment-table">
         <table>
           <thead>
             <tr>
@@ -131,10 +126,10 @@ const DoctorSchedule = () => {
                   <td>{schedule.appointmentDate}</td>
                   <td>{schedule.visitingTime}</td>
                   <td>
-                    {doctorStatus === "active" && ( // Conditionally render the button based on doctor status
+                    {doctorStatus === "available" && (
                       <button
-                        className="book-button"
-                        onClick={() => handleBookNow(schedule.visitingTime, schedule.appointmentDate)}
+                        className="doctor-schedule-book-button"
+                        onClick={() => handleBookNow(schedule.visitingTime, schedule.appointmentDate, schedule.id)} // Pass schedule ID here
                       >
                         Book Now
                       </button>

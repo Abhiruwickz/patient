@@ -1,0 +1,114 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow: scroll;
+}
+
+.add-prescription-container {
+  padding: 20px;
+  height: 800px;
+  margin: auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.form-group, .medicine-form, .diagnosis-form {
+  margin: 10px 0;
+}
+
+.form-group label, .diagnosis-form input {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"], input[type="date"], select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.medicine-form input {
+  width: calc(25% - 10px);
+  margin-right: 10px;
+}
+
+.medicine-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.medicine-table th, .medicine-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.add-prescription-container {
+  max-width: 600px;
+  margin: auto;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.medicine-form {
+  margin-bottom: 20px;
+}
+
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  position: absolute;
+  background-color: white;
+  z-index: 1000;
+}
+
+.suggestions-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestions-list li.active {
+  background-color: #007bff; /* Change to your desired highlight color */
+  color: white; /* Change to your desired text color */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+

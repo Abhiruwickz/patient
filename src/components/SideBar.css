@@ -1,0 +1,126 @@
+/* Sidebar container */
+.sidebar {
+    width: 250px; /* Set to match compact design */
+    height: 100vh;
+    background-color: #16304A; /* Dark blue background */   
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: scroll;
+    
+}
+
+/* Logo section with box and shadow */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color:rgba(24, 51, 78, 1); /* White background for the logo box */
+    border-radius: 10px; /* Slightly rounded corners */
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Shadow under the logo box */
+    margin-bottom: 40px; /* Space between logo and menu */
+    width: 100%; /* Fit well inside the sidebar */
+}
+
+/* Logo image adjustments */
+.logo-image {
+    width: 10px; /* Adjust size to fit the sidebar */
+    height: 10px;
+    margin-right: 10px;
+}
+
+.sidebar-profile-info{
+    color: #ffffff;
+}
+
+/* Logo text next to image */
+.logo-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap; /* Prevent text from wrapping */
+    color: #f3e9e9;
+}
+
+.logo-medi {
+    font-family: "Latin Modern Roman", "Times New Roman", serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgba(189, 195, 199, 1); /* Light gray color for "Medi" */
+}
+
+.logo-connect {
+    font-family: "Latin Modern Roman", "Times New Roman", serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgba(42, 163, 144, 1); /* Teal color for "Connect" */
+    margin-left: 5px;
+}
+
+
+
+/* Sidebar list */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar ul li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: white;
+    width: 100%;
+    padding: 10px 20px;
+    transition: all 0.3s;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+/* Hover and active states */
+.sidebar ul li a:hover, .sidebar ul li a.active {
+    background-color: #217A64; /* Hover color for links */
+    color: white;
+}
+
+/* Sidebar icons */
+.sidebar .icon {
+    margin-right: 10px;
+    font-size: 35px;
+    color: white;
+}
+
+/* Adjust text and spacing */
+.sidebar ul li a span {
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.sidebar ul li a:hover .icon, .sidebar ul li a.active .icon {
+    color: #e0f2f1;
+}
+.submenu {
+    padding-left: 20px; /* Indent the submenu */
+    list-style: none; /* Remove bullet points */
+  }
+  
+  .submenu li {
+    margin: 5px 0; /* Spacing between submenu items */
+  }
+  

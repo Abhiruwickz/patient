@@ -1,0 +1,65 @@
+.topbar {
+    width: calc(100% - 270px); /* Adjust width by subtracting sidebar width */
+    height: 70px; /* Keeps the height fixed */
+    background-color: rgb(255, 255, 255); /* White background */
+    color: rgb(0, 0, 0); /* Black text */
+    display: flex;
+    justify-content: space-between; /* Space content to the edges */
+    align-items: center; /* Vertically align items in the center */
+    padding: 0 30px; /* Horizontal padding */
+    position: fixed; /* Fix at the top */
+    top: 0;
+    left: 270px; /* Start after the sidebar with a width of 270px */
+    right: 0;
+    z-index: 1000; /* Ensures top bar stays on top of other elements */
+    margin: 2px 7px; /* Adds margin on the left and right for some space */
+    border-radius: 15px; /* Curved corners */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+/* Greeting section with vertical alignment */
+.greeting-container {
+    display: flex;
+    flex-direction: column; /* Stack the greeting and subtitle vertically */
+    justify-content: center;
+    align-items: flex-start; /* Align text to the left */
+}
+
+.greeting {
+    font-size: 1.2em; /* Adjusted font size for visibility */
+    color: rgba(42, 163, 144, 1);
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 0.9em; /* Slightly smaller subtitle */
+    color: #777; /* Lighter color for subtitle */
+}
+
+/* Right section containing the bell icon and user info */
+.right-section {
+    display: flex;
+    align-items: center;
+    margin-left: -10%;
+}
+
+.notification-icon {
+    font-size: 1.5em; /* Makes the icon slightly bigger */
+    margin-right: 20px; /* Space between bell and user info */
+    cursor: pointer;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between username and image */
+    margin-left: -10%;
+}
+
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular profile image */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Adds a small shadow around the image */
+    margin-left: -50%;
+}

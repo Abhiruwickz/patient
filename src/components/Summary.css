@@ -1,0 +1,91 @@
+.summary-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    border: 2px solid #B0E0E6;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8faff;
+  }
+  
+  .patient-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+  }
+  
+  .left-section h3 {
+    color: #008b8b;
+  }
+  
+  .left-section p, .right-section p {
+    margin: 4px 0;
+  }
+  
+  .medicine-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .medicine-table th, .medicine-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .medicine-table th {
+    background-color: #e6f7ff;
+  }
+  
+  .advice-section {
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+  }
+  
+  .footer-section {
+    margin-top: 20px;
+    text-align: right;
+    color: #008b8b;
+  }
+  
+  .footer-section p {
+    margin: 5px 0;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .back-button, .send-button {
+    padding: 10px 15px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .back-button {
+    background-color: #f0ad4e; /* Bootstrap warning color */
+    color: white;
+  }
+  
+  .send-button {
+    background-color: #5cb85c; /* Bootstrap success color */
+    color: white;
+  }
+  
+  .back-button:hover {
+    background-color: #ec971f;
+  }
+  
+  .send-button:hover {
+    background-color: #4cae4c;
+  }
+  

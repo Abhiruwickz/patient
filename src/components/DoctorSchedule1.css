@@ -1,0 +1,50 @@
+.doctor-schedule {
+    padding: 20px;
+}
+
+.schedule-btn {
+    background-color: #0AA1DD;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+thead {
+    background-color: #f2f2f2;
+}
+
+.active-status {
+    color: green;
+    font-weight: bold;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #FF6F6F; /* Change to a red color for the delete button */
+    font-size: 16px; /* Adjust font size as needed */
+}
+
+.action-btn:hover {
+    color: #FF3B3B; /* Darker red on hover */
+}

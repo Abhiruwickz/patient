@@ -1,0 +1,198 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+
+  }
+  
+  /* Main Dashboard Layout */
+  .dashboard-container {
+    display: flex;
+    height: 100vh;
+  }
+
+  
+  
+  /* Sidebar Styling */
+  /* .sidebar {
+    width: 250px;
+    height: 800px;
+    background-color: #1c5bd8;
+    color: white;
+    padding: 20px;
+    margin-left: -90px;
+    margin-top: -30px;
+    overflow-y: scroll;
+  } */
+  
+  .profile-info {
+    text-align: center;
+  }
+  
+  .doctor-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  
+  .menu {
+    margin-top: 20px;
+  }
+  
+  .menu-item {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .menu-item.active {
+    background-color: #1948b3;
+  }
+  
+  .menu-item:hover {
+    background-color: #1948b3;
+  }
+  
+  /* Main Content Styling */
+  .main-content {
+    margin-top: 80px; /* Adjust to create space for fixed header */
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
+  /* Header Styling */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 83vw; /* Full viewport width */
+    background-color: #1c5bd8;
+    color: white;
+    padding: 20px;
+    z-index: 100; /* Ensures it stays above other content */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-left: 235px;
+    margin-top: 2px;
+  }
+  
+  .header-info h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  /* Cards Styling */
+  .cards {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    width: 800px;
+    margin-left: 100px;
+  }
+  
+  .card {
+    background-color: #fcfcfc;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    flex: 1;
+    margin-right: 20px;
+    margin-top: -150px;
+  }
+  
+  .card:last-child {
+    margin-right: 0;
+  }
+  
+  .card img {
+    width: 40px;
+    margin-top: 10px;
+  }
+  
+  /* Patient List and Calendar */
+  .dashboard-bottom {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .patient-list {
+    width: 50%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .patient-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .patient-table {
+    margin-top: 10px;
+  }
+  
+  .patient-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .patient-table th, .patient-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .priority {
+    padding: 5px 10px;
+    border-radius: 12px;
+    color: white;
+  }
+  
+  .priority.low {
+    background-color: green;
+  }
+  
+  .priority.medium {
+    background-color: orange;
+  }
+  
+  .priority.high {
+    background-color: red;
+  }
+  
+  .calendar {
+    width: 30%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-right: 150px;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .cards {
+      flex-direction: column;
+    }
+  
+    .card {
+      margin-bottom: 20px;
+    }
+  
+    .dashboard-bottom {
+      flex-direction: column;
+    }
+  
+    .patient-list, .calendar {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+  

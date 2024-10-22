@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore'; 
 import { getDownloadURL, ref } from 'firebase/storage'; 
+import { getAuth } from 'firebase/auth'; // Import Firebase authentication
 import { db, storage } from '../../firebaseConfig'; 
 import './doctorgrid.css';
 import Navbar from '../home/navbar/navbar';
@@ -15,8 +16,8 @@ const DoctorGrid = () => {
   const [specializations, setSpecializations] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] = useState('');
   const navigate = useNavigate();
+  const auth = getAuth(); // Get the authentication instance
 
-  
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -26,11 +27,9 @@ const DoctorGrid = () => {
           ...doc.data(),
         }));
 
-        
         const specializationsSet = new Set(doctorList.map((doctor) => doctor.specialization));
         setSpecializations([...specializationsSet]);
 
-        
         const doctorsWithImages = await Promise.all(
           doctorList.map(async (doctor) => {
             const imagePath = `doctors/${doctor.id}.jpg`; 
@@ -57,7 +56,6 @@ const DoctorGrid = () => {
     fetchDoctors();
   }, []);
 
-  
   useEffect(() => {
     if (selectedSpecialization === '') {
       setFilteredDoctors(doctors);
@@ -66,9 +64,15 @@ const DoctorGrid = () => {
     }
   }, [selectedSpecialization, doctors]);
 
-  
   const handleDoctorClick = (doctorId) => {
-    navigate('/schedule', { state: { doctorId } }); // Pass the correct doctorId
+    const user = auth.currentUser; // Check if a user is logged in
+
+    if (user) {
+      navigate('/schedule', { state: { doctorId } }); // Navigate if user is authenticated
+    } else {
+      alert('Please log in to schedule an appointment.'); // Show alert if not authenticated
+      navigate('/login'); // Redirect to the login page
+    }
   };
 
   return (
@@ -80,7 +84,6 @@ const DoctorGrid = () => {
           Guiding you with care, every step of the way on your Medicare journey. Our compassionate professionals are devoted to ensuring your healthcare experience is smooth, personalized, and empowering—because your well-being is our priority.
         </p>
 
-       
         <div className="specialization-filter">
           <label htmlFor="specialization">Filter by specialization:</label>
           <select
@@ -97,14 +100,12 @@ const DoctorGrid = () => {
           </select>
         </div>
 
-        
         {error ? (
           <p>{error}</p>
         ) : loading ? (
           <p>Loading doctors...</p>
         ) : (
           <div className="categories">
-            
             {filteredDoctors.length > 0 ? (
               <div className="doctors">
                 {filteredDoctors.map((doctor) => (
@@ -113,11 +114,8 @@ const DoctorGrid = () => {
                     key={doctor.id}
                     onClick={() => handleDoctorClick(doctor.id)}
                   >
-                    
                     { <img src={doctor.photo || '/placeholder-image.png'} alt={doctor.name} /> }
                     <h4>{doctor.doctorName}</h4>
-                    
-                    
                   </div>
                 ))}
               </div>

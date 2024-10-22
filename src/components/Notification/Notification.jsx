@@ -1,69 +1,68 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, query, orderBy, updateDoc, doc } from "firebase/firestore"; 
-import { useNavigate } from "react-router-dom"; 
-import { db } from "../../firebaseConfig"; 
+import { collection, query, orderBy, onSnapshot, updateDoc, doc, where, deleteDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { db } from "../../firebaseConfig";
 import "./Notification.css";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedNotification, setSelectedNotification] = useState(null); 
-  const [isUnreadTab, setIsUnreadTab] = useState(true); // State for tab switching
-  const navigate = useNavigate(); 
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const navigate = useNavigate();
 
-  // Fetch notifications function
-  const fetchNotifications = async () => {
-    setLoading(true); // Show loading state
-    try {
-      const notificationsCollection = collection(db, "Notifications");
-      const notificationsQuery = query(
-        notificationsCollection,
-        orderBy("createdAt", "desc")
-      ); 
-      const notificationsSnapshot = await getDocs(notificationsQuery);
+  // Set up a real-time listener for notifications
+  useEffect(() => {
+    const notificationsCollection = collection(db, "Notifications");
 
-      const notificationsData = notificationsSnapshot.docs.map((doc) => ({
+    // Get the current date and calculate the date 24 hours ago
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    // Query to fetch only the notifications from the last 24 hours
+    const notificationsQuery = query(
+      notificationsCollection,
+      orderBy("createdAt", "desc"),
+      where("createdAt", ">=", oneDayAgo)
+    );
+
+    const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+      const notificationsData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-
       setNotifications(notificationsData);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(false); // Stop loading once data is fetched
+    });
 
-  // Fetch notifications on component mount
-  useEffect(() => {
-    fetchNotifications();
+    // Cleanup listener on unmount
+    return () => unsubscribe();
   }, []);
 
   const handleNotificationClick = async (notification) => {
-    setSelectedNotification(notification); 
+    setSelectedNotification(notification);
     // Mark notification as read in Firestore
     try {
       await updateDoc(doc(db, "Notifications", notification.id), {
         unread: false, // Set unread to false
       });
-      // Refresh notifications to update state
-      fetchNotifications(); // Re-fetch notifications after updating
+
+      // Update the notifications state to reflect this change
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((not) =>
+          not.id === notification.id ? { ...not, unread: false } : not
+        )
+      );
     } catch (error) {
       console.error("Error updating notification:", error);
     }
   };
 
   const handleBackToNotifications = () => {
-    setSelectedNotification(null); 
+    setSelectedNotification(null);
   };
 
-  const handleTabClick = (tab) => {
-    setIsUnreadTab(tab === "unread"); // Update tab based on selection
-  };
-
-  // Calculate the unread notifications count
-  const unreadCount = notifications.filter(notification => notification.unread).length;
+  // Calculate the total notifications count
+  const totalCount = notifications.length;
 
   return (
     <div className="container">
@@ -106,46 +105,31 @@ const Notification = () => {
               <div className="header-left">
                 <h4>Notifications</h4>
                 <span className="badge">
-                  {isUnreadTab ? unreadCount : notifications.length}
-                </span>{" "}
-                {/* Show the count of unread or all notifications based on tab */}
+                  Total Notifications: {totalCount}
+                </span>
               </div>
             </div>
 
-            <div className="tabs">
-              <button
-                className={`tab ${isUnreadTab ? "active" : ""}`}
-                onClick={() => handleTabClick("unread")}
-              >
-                Unread
-              </button>
-              <button
-                className={`tab ${!isUnreadTab ? "active" : ""}`}
-                onClick={() => handleTabClick("all")}
-              >
-                All
-              </button>
-            </div>
-
             <div className="notification-list">
-              {notifications
-                .filter(notification => 
-                  isUnreadTab ? notification.unread : true // Show unread or all based on tab
-                )
-                .map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="notification-item"
-                    onClick={() => handleNotificationClick(notification)}
-                  >
-                    <p>
-                      Dear {notification.patientName}, this is a confirmation
-                      message for your appointment with Dr. {notification.doctorName} on{" "}
-                      {notification.appointmentDate} at {notification.visitingTime}. Your
-                      appointment number is {notification.appointmentNumber}.
-                    </p>
-                  </div>
-                ))}
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`notification-item ${
+                    notification.unread ? "unread-highlight" : ""
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <p>
+                    Dear {notification.patientName}, this is a confirmation
+                    message for your appointment with Dr. {notification.doctorName} on{" "}
+                    {notification.appointmentDate} at {notification.visitingTime}. Your
+                    appointment number is {notification.appointmentNumber}.
+                  </p>
+                  {notification.unread && (
+                    <span className="unread-badge">Unread</span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}

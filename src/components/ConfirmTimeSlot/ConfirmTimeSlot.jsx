@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { collection, setDoc, doc, getDoc, getDocs, updateDoc, serverTimestamp, query, orderBy, limit, where } from "firebase/firestore"; 
+import {
+  collection,
+  setDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  where,
+  serverTimestamp,
+  doc,
+} from "firebase/firestore"; 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../firebaseConfig";
 import './ConfirmTimeSlot.css';
@@ -26,7 +36,8 @@ const ConfirmSlot = () => {
   });
 
   const [timeRemaining, setTimeRemaining] = useState(900);
-  const [doctorId, setDoctorId] = useState(""); // Add state to store doctor ID
+  const [doctorId, setDoctorId] = useState("");
+  const [scheduleId, setScheduleId] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,6 +45,31 @@ const ConfirmSlot = () => {
   const [specialization, setSpecialization] = useState("Specialization");
   const [doctorPhotoUrl, setDoctorPhotoUrl] = useState("path/to/placeholder-image.jpg");
   const timerRef = useRef(null);
+
+  const generateAppointmentNumber = async (doctorId, scheduleId) => {
+    try {
+      const appointmentsRef = collection(db, 'Appointments');
+      const q = query(appointmentsRef, where('scheduleId', '==', scheduleId));
+      const querySnapshot = await getDocs(q);
+
+      const existingNumbers = querySnapshot.docs.map((doc) => {
+        const idParts = doc.data().appointmentNumber.split('-');
+        const numPart = idParts[idParts.length - 1];
+        return parseInt(numPart, 10);
+      });
+
+      let newNumber = 1;
+      while (existingNumbers.includes(newNumber)) {
+        newNumber++;
+      }
+
+      const appointmentNumber = `${doctorId}-${scheduleId}-${String(newNumber).padStart(3, '0')}`;
+      return appointmentNumber;
+    } catch (error) {
+      console.error('Error generating appointment number: ', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const fetchLatestBooking = async () => {
@@ -51,8 +87,8 @@ const ConfirmSlot = () => {
             appointmentDate: latestBooking.appointmentDate,
           });
           setDoctorPhotoUrl(latestBooking.doctorPhotoUrl || "path/to/placeholder-image.jpg");
+          setScheduleId(latestBooking.scheduleId);
 
-          // Fetch the doctor ID based on the doctor name
           fetchDoctorId(latestBooking.doctorName);
         } else {
           console.log("No bookings found");
@@ -65,12 +101,12 @@ const ConfirmSlot = () => {
     const fetchDoctorId = async (doctorName) => {
       try {
         const doctorsCollection = collection(db, "Doctors");
-        const doctorQuery = query(doctorsCollection, where("doctorName", "==", doctorName)); // Query for doctorName
+        const doctorQuery = query(doctorsCollection, where("doctorName", "==", doctorName));
         const doctorSnapshot = await getDocs(doctorQuery);
 
         if (!doctorSnapshot.empty) {
-          const doctorDoc = doctorSnapshot.docs[0]; // Assuming the first match is the desired doctor
-          setDoctorId(doctorDoc.id); // Set the doctor ID from Firestore document ID
+          const doctorDoc = doctorSnapshot.docs[0];
+          setDoctorId(doctorDoc.id);
         } else {
           console.log("Doctor not found");
         }
@@ -96,61 +132,31 @@ const ConfirmSlot = () => {
   }, [navigate]);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "photo") {
-      setFormData({ ...formData, photo: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Helper function to generate the appointment number for each doctor, which resets daily
-  const generateAppointmentNumber = async (doctorId) => {
-    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    const counterDocRef = doc(db, "doctorCounters", doctorId);
-    const counterSnapshot = await getDoc(counterDocRef);
-
-    let counter = 1; // Default to 1 if no appointments for today
-
-    if (counterSnapshot.exists()) {
-      const counterData = counterSnapshot.data();
-      const lastUpdated = counterData.lastUpdated || "";
-      
-      // Check if the counter needs to reset (new day)
-      if (lastUpdated === today) {
-        counter = counterData.counter + 1; // Increment if the same day
-      }
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const storage = getStorage();
+      const storageRef = ref(storage, `patient_photos/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      setFormData({ ...formData, photo: url });
     }
-
-    // Update or set the counter in Firestore
-    await setDoc(counterDocRef, {
-      counter,
-      lastUpdated: today
-    });
-
-    // Format appointment number as "DOC<doctorID>-DATE-<counter>"
-    const appointmentNumber = `DOC${doctorId}-${today}-${String(counter).padStart(4, '0')}`;
-
-    return appointmentNumber;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Generate appointment number per doctor and per day
-      const appointmentNumber = await generateAppointmentNumber(doctorId);
-
-      let photoUrl = null;
-
-      if (formData.photo) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `appointments/${appointmentNumber}/${formData.photo.name}`);
-
-        await uploadBytes(storageRef, formData.photo);
-        photoUrl = await getDownloadURL(storageRef);
+      const appointmentNumber = await generateAppointmentNumber(doctorId, scheduleId);
+      if (!appointmentNumber) {
+        throw new Error("Failed to generate appointment number.");
       }
 
-      // Save appointment details along with doctor info in Appointments collection using appointmentNumber as document ID
+      let photoUrl = formData.photo;
+
       await setDoc(doc(db, "Appointments", appointmentNumber), {
         patientName: formData.patientName,
         email: formData.email,
@@ -161,31 +167,24 @@ const ConfirmSlot = () => {
         address: formData.address,
         dob: formData.dob,
         allergies: formData.allergies,
-        appointmentNumber,
         doctorId,
-        doctorName,               // Include doctor's name
-        doctorSpecialization: specialization, // Include doctor's specialization
-        doctorPhotoUrl,           // Include doctor's photo URL
-        appointmentDate: appointmentDetails.appointmentDate, // Include appointment date
-        visitingTime: appointmentDetails.visitingTime, // Include visiting time
+        doctorName,
+        appointmentNumber,
+        visitingTime: appointmentDetails.visitingTime,
+        appointmentDate: appointmentDetails.appointmentDate,
         createdAt: serverTimestamp(),
-        photoUrl                  // Include photo URL if uploaded
+        photo: photoUrl,
+        doctorPhotoUrl,
+        specialization,
+        scheduleId,
       });
 
-      console.log("Appointment saved:", { ...formData, appointmentNumber });
-
-      clearInterval(timerRef.current); // Clear the timer
-      // Navigate to confirm page
-      navigate("/confirm"); // Navigate to the confirm page after saving
+      console.log("Appointment successfully saved");
+      clearInterval(timerRef.current);
+      navigate("/confirm");
     } catch (error) {
       console.error("Error saving appointment:", error);
     }
-  };
-
-  const formatTimeRemaining = (time) => {
-    const minutes = String(Math.floor(time / 60)).padStart(2, '0');
-    const seconds = String(time % 60).padStart(2, '0');
-    return `${minutes}:${seconds}`;
   };
 
   return (
@@ -198,7 +197,7 @@ const ConfirmSlot = () => {
         <div className="doctor-details">
           <h2>{doctorName}</h2>
           <p>{specialization}</p>
-          <p><strong>Doctor ID:</strong> {doctorId}</p> {/* Display doctor ID */}
+          <p><strong>Doctor ID:</strong> {doctorId}</p>
         </div>
         <div className="appointment-details">
           <div className="time-slot">
@@ -219,7 +218,7 @@ const ConfirmSlot = () => {
             placeholder="Patient Name" 
             value={formData.patientName} 
             onChange={handleChange} 
-            required
+            required 
           />
           <input 
             type="email" 
@@ -227,7 +226,7 @@ const ConfirmSlot = () => {
             placeholder="Email" 
             value={formData.email} 
             onChange={handleChange} 
-            required
+            required 
           />
         </div>
         <div className="form-row">
@@ -237,7 +236,7 @@ const ConfirmSlot = () => {
             placeholder="Phone" 
             value={formData.phone} 
             onChange={handleChange} 
-            required
+            required 
           />
           <input 
             type="text" 
@@ -245,61 +244,73 @@ const ConfirmSlot = () => {
             placeholder="Blood Group" 
             value={formData.bloodGroup} 
             onChange={handleChange} 
-            required
+            required 
           />
         </div>
         <div className="form-row">
-          <select name="gender" value={formData.gender} onChange={handleChange} required>
-            <option value="">Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
           <input 
             type="text" 
             name="nic" 
             placeholder="NIC" 
             value={formData.nic} 
             onChange={handleChange} 
-            required
+            required 
           />
-        </div>
-        <div className="form-row">
           <input 
             type="text" 
             name="address" 
             placeholder="Address" 
             value={formData.address} 
             onChange={handleChange} 
-            required
+            required 
           />
+        </div>
+        <div className="form-row">
           <input 
             type="date" 
             name="dob" 
             placeholder="Date of Birth" 
             value={formData.dob} 
             onChange={handleChange} 
-            required
+            required 
           />
+          <select 
+            name="gender" 
+            value={formData.gender} 
+            onChange={handleChange} 
+            required 
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
         <div className="form-row">
-          <input 
-            type="text" 
+          <textarea 
             name="allergies" 
             placeholder="Allergies" 
             value={formData.allergies} 
             onChange={handleChange} 
           />
+        </div>
+        <div className="form-row">
           <input 
             type="file" 
-            name="photo" 
-            onChange={handleChange}
+            accept="image/*" 
+            onChange={handlePhotoUpload} 
           />
         </div>
-        <button type="submit" className="confirm-button">CONFIRM</button>
+        <button type="submit">Confirm Appointment</button>
       </form>
     </div>
   );
+
+  function formatTimeRemaining(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  }
 };
 
 export default ConfirmSlot;

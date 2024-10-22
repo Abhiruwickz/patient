@@ -4,13 +4,14 @@ import { db } from '../../firebaseConfig'; // Ensure your Firebase config is pro
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import './ConfirmSlot.css';
 import Header from '../header1/header1';
+import emailjs from 'emailjs-com'; // Import EmailJS
 
 function Confirm() {
   const [accepted, setAccepted] = useState(false);
   const [personalDetails, setPersonalDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [appointmentDetails, setAppointmentDetails] = useState(null);
-  const [appointmentNumber, setAppointmentNumber] = useState(''); 
+  const [appointmentNumber, setAppointmentNumber] = useState('');
   const [timer, setTimer] = useState(300); // Countdown timer initialized to 300 seconds (5 minutes)
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); // Initialize navigate for navigation
@@ -26,12 +27,13 @@ function Confirm() {
           id: doc.id,
           ...doc.data(),
         }));
-
+    
         if (appointmentsData.length > 0) {
           const latestAppointment = appointmentsData[0];
-          // Extract the last 4 digits from the appointment number
-          const extractedAppointmentNumber = latestAppointment.appointmentNumber?.slice(-4) || 'N/A';
-
+          const extractedAppointmentNumber = latestAppointment.appointmentNumber
+            ? latestAppointment.appointmentNumber.split('-')[3]
+            : 'N/A';
+    
           setAppointmentNumber(extractedAppointmentNumber);
           setPersonalDetails(latestAppointment || {});
           setAppointmentDetails({
@@ -41,7 +43,6 @@ function Confirm() {
             appointmentDate: latestAppointment.appointmentDate || 'N/A',
             visitingTime: latestAppointment.visitingTime || 'N/A',
           });
-          console.log('Fetched latest appointment details:', latestAppointment);
         } else {
           console.error('No appointments found!');
         }
@@ -51,7 +52,7 @@ function Confirm() {
         setLoading(false);
       }
     };
-
+    
     fetchLatestAppointmentDetails();
 
     // Timer countdown logic
@@ -80,7 +81,6 @@ function Confirm() {
   const handleConfirmAppointment = async () => {
     if (accepted) {
       try {
-        // Fetch the current highest reference number
         const appointmentsCollection = collection(db, 'Appointments');
         const appointmentsQuery = query(appointmentsCollection, orderBy('referenceNumber', 'desc'));
         const appointmentsSnapshot = await getDocs(appointmentsQuery);
@@ -89,15 +89,14 @@ function Confirm() {
         const latestReferenceNumber = appointmentsData.length > 0 ? Math.max(...appointmentsData.map(app => app.referenceNumber || 0)) : 0;
         const newReferenceNumber = latestReferenceNumber + 1; // Increment for the new reference number
 
-        // Prepare appointment data with the new reference number
         const appointmentData = {
-          referenceNumber: newReferenceNumber, // Use the new reference number
+          referenceNumber: newReferenceNumber,
           doctorPhotoUrl: appointmentDetails.doctorImage,
           doctorName: appointmentDetails.doctorName,
           doctorSpecialization: appointmentDetails.specialization,
           appointmentDate: appointmentDetails.appointmentDate,
           visitingTime: appointmentDetails.visitingTime,
-          patientDetails: { // Store patient details as an object
+          patientDetails: {
             name: personalDetails.patientName || 'N/A',
             phone: personalDetails.phone || 'N/A',
             nic: personalDetails.nic || 'N/A',
@@ -129,8 +128,30 @@ function Confirm() {
         const notificationsCollection = collection(db, 'Notifications');
         await addDoc(notificationsCollection, notificationData);
 
+        // Email sending logic using EmailJS
+        const templateParams = {
+          patientName: personalDetails.patientName, // Patient's name
+          doctorName: appointmentDetails.doctorName,
+          appointment_date: appointmentDetails.appointmentDate,
+          appointmentNumber: appointmentNumber,
+          visitingTime: appointmentDetails.visitingTime,
+          doctorSpecialization: appointmentDetails.specialization,
+          email: personalDetails.email, 
+        };
+
+        emailjs.send('service_bp6shxc', 'template_zihfxcv', templateParams, 'OdP_vbIDRBSVqEPG8')
+          .then((response) => {
+            console.log('Email successfully sent!', response.status, response.text);
+            setMessage('Appointment confirmed and email sent successfully!');
+            window.alert('Appointment confirmed and email sent successfully!'); // Pop-up message
+          })
+          .catch((err) => {
+            console.error('Failed to send email:', err);
+            setMessage('Error sending email.');
+          });
+
         setMessage('Appointment confirmed successfully!');
-        navigate('/');
+        navigate('/'); // Navigate to home or another page after confirmation
       } catch (error) {
         console.error('Error confirming appointment:', error);
         setMessage('Error confirming appointment.');
@@ -185,30 +206,37 @@ function Confirm() {
           )}
         </div>
 
-        <div className="appointment-details">
-          <h4>Appointment Details</h4>
-          <p><strong>Appointment Time:</strong> {appointmentDetails ? appointmentDetails.appointmentDate : 'Loading...'}</p>
-          <p><strong>Visiting Time:</strong> {appointmentDetails ? appointmentDetails.visitingTime : 'Loading...'}</p>
-        </div>
-
         <div className="terms-and-conditions">
-          <h4>Terms & Conditions</h4>
-          <ul>
-            <li>All customers using MediConnect Channeling shall have read and agreed to the terms and conditions.</li>
-            <li>Terms and conditions apply when scheduling appointments via the website.</li>
-            <li>Customers are not responsible for the quality of advice provided by the doctor.</li>
-            <li>Customers are responsible for the accuracy of personal information when scheduling appointments.</li>
-            <li>Appointment times may change without notice.</li>
-            <li>Payment will not be refunded except in certain cases.</li>
-          </ul>
-          <label>
-            <input type="checkbox" checked={accepted} onChange={handleAcceptTerms} /> Accept Terms & Conditions
-          </label>
+          <h4>Terms and Conditions</h4>
+          <p>
+            By confirming your appointment, you agree to the following terms and conditions:
+            <ul>
+              <li>You must arrive on time for your scheduled appointment.</li>
+              <li>If you need to cancel or reschedule, please do so at least 24 hours in advance.</li>
+              <li>All personal information will be kept confidential.</li>
+              <li>Our clinic is not responsible for missed appointments due to late arrivals.</li>
+            </ul>
+          </p>
+          <div>
+            <input 
+              type="checkbox" 
+              id="accept-terms" 
+              checked={accepted} 
+              onChange={handleAcceptTerms} 
+            />
+            <label htmlFor="accept-terms">
+              I accept the terms and conditions.
+            </label>
+          </div>
         </div>
 
-        <button onClick={handleConfirmAppointment} className="confirm-appointment-btn">CONFIRM</button>
+        <div className="confirmation-message">
+          <p>{message}</p>
+        </div>
 
-        {message && <p className="confirmation-message">{message}</p>}
+        <button onClick={handleConfirmAppointment} disabled={loading || !accepted}>
+          Confirm Appointment
+        </button>
       </div>
     </div>
   );

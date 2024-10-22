@@ -13,38 +13,49 @@ const Login = () => {
   const [resetMessage, setResetMessage] = useState('');
   const navigate = useNavigate();
 
-  // Function to fetch user credentials from Firestore
-  const fetchPatientCredentials = async () => {
-    const webpatientsRef = collection(db, "webpatients"); // Reference to the webpatients collection
-    const q = query(webpatientsRef, where("email", "==", username)); // Query to find the user by email
-
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      // If the user exists, retrieve the email and password from Firestore
-      const patientData = querySnapshot.docs[0].data();
-      return {
-        email: patientData.email,
-        password: patientData.password
-      };
-    } else {
-      throw new Error('User not found');
-    }
-  };
-
   // Handle login
   const handleLogin = async () => {
     try {
-      // Fetch credentials from Firestore based on entered email
-      const { email, password: dbPassword } = await fetchPatientCredentials();
+      const trimmedUsername = username.trim();
+      const trimmedPassword = password.trim();
 
-      // Sign in using the retrieved credentials from Firestore
-      await signInWithEmailAndPassword(auth, email, password || dbPassword);
+      // Attempt to sign in with Firebase Auth first
+      await signInWithEmailAndPassword(auth, trimmedUsername, trimmedPassword);
 
-      // Navigate to home page upon successful login
-      navigate('/');
+      // Check user role based on their email domain
+      if (trimmedUsername.endsWith('@med.lk')) {
+        // Query the Doctors collection
+        const doctorsRef = collection(db, "Doctors");
+        const doctorQuery = query(doctorsRef, where("UserName", "==", trimmedUsername));
+        const doctorQuerySnapshot = await getDocs(doctorQuery);
+
+        if (!doctorQuerySnapshot.empty) {
+          // If a matching doctor is found, navigate to the doctor's dashboard
+          const doctorDoc = doctorQuerySnapshot.docs[0];
+          const doctorId = doctorDoc.id;
+          navigate('/dashboard', { state: { doctorId } });
+        } else {
+          setErrorMessage("Doctor not found.");
+        }
+      } else if (trimmedUsername.endsWith('@pharmacy.lk')) {
+        // Navigate to pharmacy dashboard if the email ends with @pharmacy.lk
+        navigate('/pharmacy/dashboard');
+      } else {
+        // Query the webpatients collection
+        const webpatientsRef = collection(db, "webpatients");
+        const patientQuery = query(webpatientsRef, where("email", "==", trimmedUsername));
+        const patientQuerySnapshot = await getDocs(patientQuery);
+
+        if (!patientQuerySnapshot.empty) {
+          // If a matching patient is found, navigate to the patient home/dashboard
+          navigate('/');
+        } else {
+          setErrorMessage("Patient not found.");
+        }
+      }
     } catch (error) {
-      setErrorMessage('Invalid email or password.');
-      console.error('Error during login:', error);
+      setErrorMessage(`Failed to log in: ${error.message}`);
+      console.error("Error logging in: ", error); // Provide more details in the console
     }
   };
 

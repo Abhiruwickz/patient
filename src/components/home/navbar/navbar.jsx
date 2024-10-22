@@ -18,6 +18,16 @@ const Navbar = () => {
     }
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await auth.signOut(); // Sign out the user using Firebase Auth
+      setUserEmail(null); // Clear user email state
+      navigate('/login'); // Navigate back to login page after logout
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   const handleNotificationClick = () => {
     navigate('/notifications'); // Navigate to the notification page
   };
@@ -40,10 +50,13 @@ const Navbar = () => {
 
       <div className="navbar-buttons">
         {userEmail ? (
-          <span className="welcome-text">Hi {userEmail}</span> // Display the logged-in user's email
+          <>
+            <span className="welcome-text">Hi {userEmail}</span> {/* Display the logged-in user's email */}
+            <button className="logout-btn" onClick={handleLogout}>Logout</button> {/* Logout button */}
+          </>
         ) : (
           <Link to="/login">
-            <button className="login-btn">Login</button>
+            <button className="login-btn">Login</button> {/* Login button */}
           </Link>
         )}
 

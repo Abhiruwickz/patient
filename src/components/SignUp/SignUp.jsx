@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { doc, setDoc } from 'firebase/firestore'; // Firestore imports
-import { db } from '../../firebaseConfig'; // Import Firestore db from firebase.js
+import { createUserWithEmailAndPassword } from 'firebase/auth'; // Firebase Auth imports
+import { auth, db } from '../../firebaseConfig'; // Import Firebase Auth and Firestore db
 import './SignUp.css';
 
 const SignUp = () => {
@@ -31,18 +32,35 @@ const SignUp = () => {
   };
 
   const handleSignup = async () => {
+    const { email, password, confirmPassword, nic, title, firstName, lastName, contactNo } = formData;
+  
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+  
     try {
-      // Save data to Firestore (patients collection)
-      const patientDoc = doc(db, 'webpatients', formData.nic); // Use NIC as a document ID
-      await setDoc(patientDoc, {
-        ...formData,
-        photo: photo ? photo.name : null, // You may want to handle photo uploads separately
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log('Firebase Auth successful. User:', user);
+      
+      // Save input details to Firestore with nic as the document ID
+      await setDoc(doc(db, "webpatients", nic), {
+        title,
+        firstName,
+        lastName,
+        email,
+        contactNo,
+        nic,
+        photoURL: photo ? photo.name : '', // You can later store the uploaded file to Firebase Storage if needed
       });
+      console.log('User data saved to Firestore');
 
-      // After saving, navigate to the login page
-      navigate('/login');
+      navigate('/login'); // Navigate to login page after successful signup
     } catch (error) {
-      console.error('Error saving data to Firestore:', error);
+      console.error('Error during signup process:', error.message); 
+      alert(`Failed to sign up: ${error.message}`);
     }
   };
 
@@ -52,8 +70,6 @@ const SignUp = () => {
 
   return (
     <div className="signup-container">
-      
-
       <div className="signup-content">
         <h2>Sign up</h2>
 
@@ -61,7 +77,6 @@ const SignUp = () => {
           <div className="form-group">
             <label>Title</label>
             <select name="title" onChange={handleInputChange}>
-              <option value="Dr.">Dr.</option>
               <option value="Mr.">Mr.</option>
               <option value="Mrs.">Mrs.</option>
               <option value="Miss.">Miss.</option>
@@ -167,8 +182,6 @@ const SignUp = () => {
           </span>
         </div>
       </div>
-
-      
     </div>
   );
 };
