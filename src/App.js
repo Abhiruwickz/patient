@@ -60,10 +60,10 @@ function AppContent() {
   const isPharmacyRoute = pharmacyRoutes.includes(location.pathname);
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div>
       {isDashboardRoute && <SideBar />}
       {isPharmacyRoute && <SideBar_pharmacy />}
-      <div style={{ flex: 1, marginLeft: isDashboardRoute || isPharmacyRoute ? '250px' : '0', paddingTop: '60px' }}>
+      <div >
         {isDashboardRoute && <TopBar />}
         {isPharmacyRoute && <TopBar_pharmacy />}
         <Routes>
