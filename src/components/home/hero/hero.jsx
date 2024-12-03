@@ -1,45 +1,58 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import './hero.css';
-import Navbar from '../navbar/navbar';  
-import Footer from '../../footer/footer'; 
-import WelcomeSection from '../welcome/WelcomeSection';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../navbar/navbar";
+import Footer from "../../footer/footer";
+import WelcomeSection from "../welcome/WelcomeSection";
+import heroBg from "../../assets/1.jpg"; // Import your background image
 
 const Hero = () => {
-  const navigate = useNavigate(); // Initialize navigate for navigation
+  const navigate = useNavigate();
 
   const handleAppointmentClick = () => {
-    navigate('/app'); // Navigate to the /app page
+    navigate("/app");
   };
 
   return (
     <>
-      <Navbar /> 
+      <Navbar />
+      <div
+        className="hero-section bg-cover bg-center relative h-[80vh]"
+        style={{
+          backgroundImage: `url(${heroBg})`, // Set the background image dynamically
+        }}
+      >
+        {/* Main Content Box */}
+        <div className="absolute top-1/4 left-10 bg-black bg-opacity-50 p-8 rounded-lg max-w-md">
+          <h1 className="text-4xl font-bold text-white leading-tight mb-4">
+            SIMPLIFYING <br />
+            MEDICARE, <br />
+            EMPOWERING YOU
+          </h1>
+          <p className="text-lg text-white mb-6">
+            Effortlessly navigating Medicare for your peace of mind
+          </p>
+          <button
+            onClick={handleAppointmentClick}
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg font-medium mt-4"
+          >
+            Make An Appointment
+          </button>
+        </div>
 
-      <div className="hero-section">
-        <div className="hero-content">
-          <h1>SIMPLIFYING<br />MEDICARE,<br />EMPOWERING YOU</h1>
-          <p>Effortlessly managing Medicare for your peace of mind</p>
-          <div className="hero-stats">
-            <div className="years">
-              <h3>05+</h3>
-              <p>Years of Experience</p>
-            </div>
-            <div className="satisfaction">
-              <h3>100%</h3>
-              <p>Patient Satisfaction</p>
-              <button className="appointment-btn" onClick={handleAppointmentClick}>
-                Make An Appointment
-              </button>
-            </div>
+        {/* Experience and Satisfaction Box */}
+        <div className="absolute bottom-10 right-10 bg-black bg-opacity-50 p-4 rounded-lg flex gap-8 text-center">
+          <div>
+            <h3 className="text-3xl font-bold text-white">05+</h3>
+            <p className="text-sm text-white">Years of Experience</p>
+          </div>
+          <div>
+            <h3 className="text-3xl font-bold text-white">100%</h3>
+            <p className="text-sm text-white">Patient Satisfaction</p>
           </div>
         </div>
-        {/* <img src={doctor} alt="Doctor" className="hero-image" /> */}
       </div>
-
       <WelcomeSection />
-
-      <Footer /> 
+      <Footer />
     </>
   );
 };

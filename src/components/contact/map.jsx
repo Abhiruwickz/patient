@@ -1,33 +1,34 @@
 import React from 'react';
-import './map.css';
 import Navbar from '../home/navbar/navbar';
-import Info from '../contact/info';        
-import Disclaimer from '../contact/disclamer'; 
+import InfoSection from '../contact/info';
+import Disclaimer from '../contact/disclamer';
 import Footer from '../footer/footer';
 
-
 function MapSection() {
-    return (
-      
-      <section className="map-section">
-        <Navbar />
-        <div className='map-section'>
-        <div className='gmap-frame'> 
-        <iframe width="1400" height="550" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=Mihisetha%20Channel%20Center,%20Main%20Street,%20Godakawela,sri%20lanka+(Mihisetha%20Channel%20Center)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps tracker sport</a></iframe>
-        </div>      
-        </div> 
-          
-          
-          <div>
-          <Info />        
-          <Disclaimer />
-         
+  return (
+    <>
+      <Navbar />
+      <section className="py-8 bg-white">
+        <div className="gmap-frame w-full h-[500px] max-w-screen-lg mx-auto mb-8 border-2 border-gray-300 rounded-lg shadow-lg">
+          <iframe
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            scrolling="no"
+            marginHeight="0"
+            marginWidth="0"
+            src="https://maps.google.com/maps?width=520&height=400&hl=en&q=Mihisetha%20Channel%20Center,%20Main%20Street,%20Godakawela,sri%20lanka+(Mihisetha%20Channel%20Center)&t=&z=14&ie=UTF8&iwloc=B&output=embed"
+            title="Mihisetha Channel Center Location Map"  
+          ></iframe>
         </div>
-        <Footer />
+        <div className="info-disclaimer max-w-screen-lg mx-auto pt-8">
+          <InfoSection />
+          <Disclaimer />
+        </div>
       </section>
-      
-    );
-  }
-  
-  export default MapSection;
-  
+      <Footer />
+    </>
+  );
+}
+
+export default MapSection;

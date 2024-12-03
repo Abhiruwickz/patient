@@ -77,7 +77,7 @@ const Appointment = () => {
     <div className="appointment">
       <main className="appointment-main">
         <div className="appointment-content">
-          <h2 className="appointment-greeting">Good Morning, Dr Sheril</h2>
+          
           <div className="appointment-summary">
             <h3>Select Patient</h3>
             <select className="appointment-select">

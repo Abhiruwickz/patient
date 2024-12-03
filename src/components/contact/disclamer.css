@@ -1,5 +1,7 @@
 .disclaimer {
-    text-align: center;
-    padding: 20px;
-  }
-  
+  text-align: center;
+  background-color: #D7E4FE;
+  padding: 15px 0;
+  font-size: 14px;
+  color: #333;
+}

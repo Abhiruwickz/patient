@@ -2,43 +2,99 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #f8f9fc;
+  min-height: 100vh;
   padding: 20px;
 }
 
 h1 {
+  font-size: 24px;
+  color: #3c51d7;
   margin-bottom: 20px;
 }
 
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns */
-  grid-gap: 10px;
-  background-color: #e3f2fd;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  background: #ffffff;
   padding: 20px;
   border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1000px;
 }
 
 .grid-item {
-  background-color: white;
-  padding: 10px 20px;
-  text-align: center;
-  border: 1px solid #d1d1d1;
-  border-radius: 5px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  background: #e0e7ff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.grid-item h3 {
+  font-size: 16px;
+  color: #3c51d7;
+  margin-bottom: 10px;
+}
+
+.grid-item p {
   font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+}
+
+.grid-item ul {
+  list-style: none;
+  padding: 0;
+}
+
+.grid-item ul li {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.patient-info-card {
+  flex: 1;
+  background: #e0e7ff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.patient-info-card p {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+}
+
+.prescription-details {
+  flex: 1;
+  background: #e0e7ff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.prescription-details h3 {
+  font-size: 16px;
+  color: #3c51d7;
+  margin-bottom: 10px;
 }
 
 .back-button {
-  margin-top: 20px;
-  background-color: #4285f4;
-  color: white;
-  border: none;
+  background: #3c51d7;
+  color: #ffffff;
   padding: 10px 20px;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  margin-top: 20px;
 }
 
 .back-button:hover {
-  background-color: #357ae8;
+  background: #2a3eb1;
 }

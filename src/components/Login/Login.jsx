@@ -1,36 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'; // Firebase Auth methods
-import { auth, db } from '../../firebaseConfig'; // Import Firebase Auth and Firestore
-import { collection, getDocs, query, where } from 'firebase/firestore'; // Firestore methods
-import './Login.css';
-import login from "../assets/1.jpg";
+import { signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth, db } from '../../firebaseConfig';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import loginImage from "../assets/1.jpg";
 
 const Login = () => {
-  const [username, setUsername] = useState(''); // username = email
-  const [password, setPassword] = useState(''); // password entered by user
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [resetMessage, setResetMessage] = useState('');
   const navigate = useNavigate();
 
-  // Handle login
   const handleLogin = async () => {
     try {
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
-
-      // Attempt to sign in with Firebase Auth first
       await signInWithEmailAndPassword(auth, trimmedUsername, trimmedPassword);
 
-      // Check user role based on their email domain
       if (trimmedUsername.endsWith('@med.lk')) {
-        // Query the Doctors collection
         const doctorsRef = collection(db, "Doctors");
         const doctorQuery = query(doctorsRef, where("UserName", "==", trimmedUsername));
         const doctorQuerySnapshot = await getDocs(doctorQuery);
 
         if (!doctorQuerySnapshot.empty) {
-          // If a matching doctor is found, navigate to the doctor's dashboard
           const doctorDoc = doctorQuerySnapshot.docs[0];
           const doctorId = doctorDoc.id;
           navigate('/dashboard', { state: { doctorId } });
@@ -38,16 +31,13 @@ const Login = () => {
           setErrorMessage("Doctor not found.");
         }
       } else if (trimmedUsername.endsWith('@pharmacy.lk')) {
-        // Navigate to pharmacy dashboard if the email ends with @pharmacy.lk
         navigate('/pharmacy/dashboard');
       } else {
-        // Query the webpatients collection
         const webpatientsRef = collection(db, "webpatients");
         const patientQuery = query(webpatientsRef, where("email", "==", trimmedUsername));
         const patientQuerySnapshot = await getDocs(patientQuery);
 
         if (!patientQuerySnapshot.empty) {
-          // If a matching patient is found, navigate to the patient home/dashboard
           navigate('/');
         } else {
           setErrorMessage("Patient not found.");
@@ -55,7 +45,7 @@ const Login = () => {
       }
     } catch (error) {
       setErrorMessage(`Failed to log in: ${error.message}`);
-      console.error("Error logging in: ", error); // Provide more details in the console
+      console.error("Error logging in: ", error);
     }
   };
 
@@ -77,7 +67,7 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      navigate('/'); // Navigate to home page upon successful Google sign-in
+      navigate('/');
     } catch (error) {
       setErrorMessage('Error during Google sign-in.');
       console.error('Error during Google sign-in:', error);
@@ -85,53 +75,59 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-content">
-        <div className="login-image">
-          <img src={login} alt="Doctors group" />
-        </div>
+    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-cover bg-center" style={{ backgroundImage: `url(${loginImage})` }}>
+      <div className="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md lg:mx-8">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
 
-        <div className="login-form">
-          <h2>Login</h2>
-
-          <div className="form-group1">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group1">
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none"
+          />
+          <div>
             <input
               type="password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:outline-none"
             />
-            <div className="forgot-password" onClick={handleForgotPassword}>
+            <div
+              onClick={handleForgotPassword}
+              className="text-sm text-blue-600 hover:underline mt-2 cursor-pointer text-right"
+            >
               Forgot Password?
             </div>
           </div>
+        </div>
 
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-          {resetMessage && <div className="reset-message">{resetMessage}</div>}
+        {errorMessage && <div className="text-sm text-red-600 mt-4">{errorMessage}</div>}
+        {resetMessage && <div className="text-sm text-green-600 mt-4">{resetMessage}</div>}
 
-          <button type="submit" className="login-button" onClick={handleLogin}>
-            Login
+        <button
+          onClick={handleLogin}
+          className="w-full bg-blue-600 text-white py-2 rounded-md mt-6 hover:bg-blue-700 transition-colors"
+        >
+          Login
+        </button>
+
+        <div className="text-center mt-4">
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full bg-transparent border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors"
+          >
+            Sign in with Google
           </button>
+        </div>
 
-          <div className="google-signin">
-            <button className="google-button" onClick={handleGoogleSignIn}>
-              Sign in with Google
-            </button>
-          </div>
-
-          <div className="signup-section">
-            <span>Do not have an account?</span>
-            <Link to="/signup">Sign up</Link>
-          </div>
+        <div className="text-center mt-4 text-sm text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Sign up
+          </Link>
         </div>
       </div>
     </div>

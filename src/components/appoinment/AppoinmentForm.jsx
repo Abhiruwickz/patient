@@ -1,31 +1,26 @@
-// /profile/components/AppointmentForm.js
 import React, { useState, useEffect } from 'react';
 import './AppoinmentForm.css';
-import Header from '../header1/header1';
-import { db } from '../../firebaseConfig'; // Adjust the import based on your Firebase config file
+import { db } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const AppointmentForm = () => {
   const [specialization, setSpecialization] = useState('');
   const [medicalOfficer, setMedicalOfficer] = useState('');
   const [specializationsList, setSpecializationsList] = useState([]);
   const [doctorsList, setDoctorsList] = useState([]);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
-  // Fetch specializations on component mount
   useEffect(() => {
     const fetchSpecializations = async () => {
       const specializationsCollection = collection(db, 'Doctors');
       const snapshot = await getDocs(specializationsCollection);
       const specializations = snapshot.docs.map(doc => doc.data().specialization);
-      setSpecializationsList([...new Set(specializations)]); // Remove duplicates
+      setSpecializationsList([...new Set(specializations)]);
     };
-
     fetchSpecializations();
   }, []);
 
-  // Fetch doctors when specialization is selected
   useEffect(() => {
     const fetchDoctors = async () => {
       if (specialization) {
@@ -33,14 +28,12 @@ const AppointmentForm = () => {
         const snapshot = await getDocs(doctorsCollection);
         const doctors = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(doctor => doctor.specialization === specialization); // Filter by specialization
-
+          .filter(doctor => doctor.specialization === specialization);
         setDoctorsList(doctors);
       } else {
-        setDoctorsList([]); // Reset doctors list if no specialization is selected
+        setDoctorsList([]);
       }
     };
-
     fetchDoctors();
   }, [specialization]);
 
@@ -49,19 +42,13 @@ const AppointmentForm = () => {
     if (medicalOfficer) {
       const selectedDoctor = doctorsList.find(doctor => doctor.doctorName === medicalOfficer);
       if (selectedDoctor) {
-        // Navigate to the schedule page of the selected doctor with state containing doctorId
-        navigate('/schedule', { state: { doctorId: selectedDoctor.id } }); // Pass doctor ID in state
+        navigate('/schedule', { state: { doctorId: selectedDoctor.id } });
       }
     }
-};
-
+  };
 
   return (
     <div className="appointment-container">
-      <Header />
-      <div className="logo-section">
-        <h1 className="logo-title"></h1>
-      </div>
       <div className="form-container">
         <h2 className="form-title">Make An Appointment</h2>
         <form onSubmit={handleSearch}>
@@ -86,7 +73,7 @@ const AppointmentForm = () => {
 
           <div className="form-group">
             <label htmlFor="medical-officer" className="form-label">
-              <span className="icon">👨‍⚕</span> Medical Officer
+              <span className="icon">👨‍⚕️</span> Medical Officer
             </label>
             <select
               id="medical-officer"

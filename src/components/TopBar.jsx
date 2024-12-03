@@ -34,7 +34,7 @@ const TopBar = () => {
             </div>
 
             <div className="right-section">
-                <FiBell className="notification-icon" />
+                
                 <div className="user-info">
                     <img className="profile-image" src={logo} alt="Admin Profile" />
                     <span className="admin-name" onClick={handleProfileClick}>Mr Doctor</span>

@@ -1,20 +1,28 @@
 import React from 'react';
-import './header1.css';
-import { FaBell } from 'react-icons/fa'; // Using Font Awesome icons
+import { FaBell } from 'react-icons/fa';
+import Logo1 from '../assets/logomedi.png';
 
 const Header = () => {
     return (
-        <header className="header-container">
-            <div className="header-logo">
-                {/* Placeholder for the logo */}
-                <img src="logo-placeholder.png" alt="Logo" className="logo-image" />
-            </div>
-            <div className="header-title">
-                <span className="brand-name">Medi</span><span className="highlight">Connect</span>
-            </div>
-            <div className="header-icon">
-                {/* Bell icon */}
-                <FaBell className="bell-icon" />
+        <header className="w-full bg-[#eef3fc] shadow-md">
+            <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-[70px]">
+                {/* Logo Section */}
+                <div className="flex items-center gap-3 ">
+                    <img
+                        src={Logo1}
+                        alt="Logo"
+                        className="w-30 h-20 object-cover"
+                    />
+                    <div>
+                        <span className="text-2xl font-bold text-[#00897b]">
+                            Medi
+                            <span className="text-[#4aa0ff]">Connect</span>
+                        </span>
+                    </div>
+                </div>
+
+                {/* Bell Icon */}
+                <FaBell className="text-2xl text-black cursor-pointer" />
             </div>
         </header>
     );

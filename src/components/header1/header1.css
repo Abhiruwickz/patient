@@ -1,50 +1,82 @@
-/* Header.css */
+/* .header-container {
+  width: 100%;
+  background-color: #eef3fc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-.header-container {
-  display: flex; /* Flexbox for layout */
-  justify-content: space-between; /* Space out items */
-  align-items: center; /* Center vertically */
-  background-color: #1f3e85; /* Background color of the header */
-  padding: 10px 20px; /* Padding inside the header */
-  width: 1353px; /* Full width */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-  margin-left: -70px;
-  margin-top: -20px;
-  height: 65px;
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 70px;
 }
 
 .header-logo {
-  flex: 1; /* Take up space */
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .logo-image {
-  width: 40px; /* Logo size */
-  height: auto; /* Maintain aspect ratio */
-}
-
-.header-title {
-  flex: 2; /* More space for the title */
-  text-align: center; /* Center the title */
-  font-size: 20px; /* Font size for the title */
-  font-weight: bold; /* Make the title bold */
-  color: white; /* Text color */
+  width: 60px;
+  height: auto;
 }
 
 .brand-name {
-  color: #ffffff; /* Default brand name color */
+  font-size: 24px;
+  font-weight: bold;
+  color: #00897b;
 }
 
 .highlight {
-  color: #4aa0ff; /* Highlight color for 'Connect' */
+  color: #4aa0ff;
 }
 
-.header-icon {
-  flex: 1; /* Take up space */
-  text-align: right; /* Align the icon to the right */
+.header-nav {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #1B3C7D;
+  font-size: 16px;
+  transition: color 0.3s;
+  padding: 5px 10px;
+}
+
+.nav-link:hover {
+  color: #4aa0ff;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.login-button {
+  background-color: #4aa0ff;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #1B3C7D;
 }
 
 .bell-icon {
-  font-size: 24px; /* Size of the bell icon */
-  color: #000000; /* Color of the bell icon */
-  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 24px;
+  color: #000;
+  cursor: pointer;
+ 
 }
+.path{
+  
+} */

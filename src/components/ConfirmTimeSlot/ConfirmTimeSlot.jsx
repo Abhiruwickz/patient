@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   collection,
   setDoc,
@@ -10,10 +10,9 @@ import {
   where,
   serverTimestamp,
   doc,
-} from "firebase/firestore"; 
+} from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../firebaseConfig";
-import './ConfirmTimeSlot.css';
 import Header from "../header1/header1";
 
 const ConfirmSlot = () => {
@@ -39,7 +38,6 @@ const ConfirmSlot = () => {
   const [doctorId, setDoctorId] = useState("");
   const [scheduleId, setScheduleId] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [doctorName, setDoctorName] = useState("Doctor Name");
   const [specialization, setSpecialization] = useState("Specialization");
@@ -48,12 +46,12 @@ const ConfirmSlot = () => {
 
   const generateAppointmentNumber = async (doctorId, scheduleId) => {
     try {
-      const appointmentsRef = collection(db, 'Appointments');
-      const q = query(appointmentsRef, where('scheduleId', '==', scheduleId));
+      const appointmentsRef = collection(db, "Appointments");
+      const q = query(appointmentsRef, where("scheduleId", "==", scheduleId));
       const querySnapshot = await getDocs(q);
 
       const existingNumbers = querySnapshot.docs.map((doc) => {
-        const idParts = doc.data().appointmentNumber.split('-');
+        const idParts = doc.data().appointmentNumber.split("-");
         const numPart = idParts[idParts.length - 1];
         return parseInt(numPart, 10);
       });
@@ -63,10 +61,10 @@ const ConfirmSlot = () => {
         newNumber++;
       }
 
-      const appointmentNumber = `${doctorId}-${scheduleId}-${String(newNumber).padStart(3, '0')}`;
+      const appointmentNumber = `${doctorId}-${scheduleId}-${String(newNumber).padStart(3, "0")}`;
       return appointmentNumber;
     } catch (error) {
-      console.error('Error generating appointment number: ', error);
+      console.error("Error generating appointment number: ", error);
       return null;
     }
   };
@@ -117,11 +115,15 @@ const ConfirmSlot = () => {
 
     fetchLatestBooking();
 
+    const handleTimeout = () => {
+      navigate("/doctors");
+    };
+
     timerRef.current = setInterval(() => {
       setTimeRemaining((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timerRef.current);
-          navigate("/doctors");
+          handleTimeout(); // calling handleTimeout here to navigate after time expires
           return 0;
         }
         return prevTime - 1;
@@ -129,7 +131,7 @@ const ConfirmSlot = () => {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [navigate]);
+  }, [navigate]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -157,16 +159,9 @@ const ConfirmSlot = () => {
 
       let photoUrl = formData.photo;
 
+      // Save the appointment
       await setDoc(doc(db, "Appointments", appointmentNumber), {
-        patientName: formData.patientName,
-        email: formData.email,
-        phone: formData.phone,
-        bloodGroup: formData.bloodGroup,
-        gender: formData.gender,
-        nic: formData.nic,
-        address: formData.address,
-        dob: formData.dob,
-        allergies: formData.allergies,
+        ...formData,
         doctorId,
         doctorName,
         appointmentNumber,
@@ -184,133 +179,142 @@ const ConfirmSlot = () => {
       navigate("/confirm");
     } catch (error) {
       console.error("Error saving appointment:", error);
+      alert("An error occurred while saving the appointment. Please try again.");
     }
   };
 
   return (
-    <div className="confirm-slot-container">
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
       <Header />
-      <h1>Confirm Time Slot</h1>
+      <h1 className="text-3xl font-semibold mb-6 mt-3 ">Confirm Time Slot</h1>
 
-      <div className="doctor-info-card">
-        <img src={doctorPhotoUrl} alt="Doctor Profile" />
-        <div className="doctor-details">
-          <h2>{doctorName}</h2>
-          <p>{specialization}</p>
-          <p><strong>Doctor ID:</strong> {doctorId}</p>
-        </div>
-        <div className="appointment-details">
-          <div className="time-slot">
-            <p>{appointmentDetails.visitingTime || "Loading time..."}</p>
-            <p>{appointmentDetails.appointmentDate || "Loading date..."}</p>
-          </div>
-          <div className="time-warning">
-            <p>Complete within <span>{formatTimeRemaining(timeRemaining)}</span></p>
-          </div>
-        </div>
-      </div>
+      <div className="flex mb-6 bg-white rounded-lg p-4 shadow-md">
+  <img src={doctorPhotoUrl} alt="Doctor Profile" className="w-32 h-32 mr-4" />
+  <div className="flex flex-col ml-10 ">
+    <h2 className="text-xl font-semibold">{doctorName}</h2>
+    <p className="text-blue-500">{specialization}</p>
+    {/* <p className="text-sm text-gray-400">{appointmentDetails.visitingTime}</p> */}
+  </div>
+  {/* Right Side Section */}
+  <div className="border-2 border-blue-800 bg-white rounded-lg w-1/3 p-4 shadow-md flex flex-col justify-center items-start ml-32">
+    <p className="text-sm text-slate-700 font-semibold mb-2">{appointmentDetails.visitingTime}</p>
+    <p className="text-sm text-red-300 font-bold">
+      Complete within {Math.floor(timeRemaining / 60)} minutes your appointment.
+    </p>
+  </div>
+</div>
 
-      <form className="patient-form" onSubmit={handleSubmit}>
-        <div className="form-row">
-          <input 
-            type="text" 
-            name="patientName" 
-            placeholder="Patient Name" 
-            value={formData.patientName} 
-            onChange={handleChange} 
-            required 
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="patientName"
+            placeholder="Patient Name"
+            value={formData.patientName}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
           />
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="Email" 
-            value={formData.email} 
-            onChange={handleChange} 
-            required 
-          />
-        </div>
-        <div className="form-row">
-          <input 
-            type="text" 
-            name="phone" 
-            placeholder="Phone" 
-            value={formData.phone} 
-            onChange={handleChange} 
-            required 
-          />
-          <input 
-            type="text" 
-            name="bloodGroup" 
-            placeholder="Blood Group" 
-            value={formData.bloodGroup} 
-            onChange={handleChange} 
-            required 
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
           />
         </div>
-        <div className="form-row">
-          <input 
-            type="text" 
-            name="nic" 
-            placeholder="NIC" 
-            value={formData.nic} 
-            onChange={handleChange} 
-            required 
+
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
           />
-          <input 
-            type="text" 
-            name="address" 
-            placeholder="Address" 
-            value={formData.address} 
-            onChange={handleChange} 
-            required 
-          />
-        </div>
-        <div className="form-row">
-          <input 
-            type="date" 
-            name="dob" 
-            placeholder="Date of Birth" 
-            value={formData.dob} 
-            onChange={handleChange} 
-            required 
-          />
-          <select 
-            name="gender" 
-            value={formData.gender} 
-            onChange={handleChange} 
-            required 
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div className="form-row">
-          <textarea 
-            name="allergies" 
-            placeholder="Allergies" 
-            value={formData.allergies} 
-            onChange={handleChange} 
+          <input
+            type="text"
+            name="bloodGroup"
+            placeholder="Blood Group"
+            value={formData.bloodGroup}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
           />
         </div>
-        <div className="form-row">
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handlePhotoUpload} 
+
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="nic"
+            placeholder="NIC"
+            value={formData.nic}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
+          />
+          <input
+            type="text"
+            name="gender"
+            placeholder="Gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
+          />
+          <input
+            type="date"
+            name="dob"
+            placeholder="Date of Birth"
+            value={formData.dob}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            required
+          />
+          <input
+            type="file"
+            onChange={handlePhotoUpload}
+            className="p-2 border rounded-md"
           />
         </div>
-        <button type="submit">Confirm Appointment</button>
+
+        <div className="grid grid-cols-1">
+          <textarea
+            name="allergies"
+            placeholder="Allergies (if any)"
+            value={formData.allergies}
+            onChange={handleChange}
+            className="p-2 border rounded-md"
+            rows="4"
+          />
+        </div>
+        <div className="flex justify-between mb-4">
+          <div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-2 px-6 rounded-md"
+            >
+              Go back
+            </button>
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-2 px-6 rounded-md"
+            >
+              Confirm Appointment
+            </button>
+          </div>
+        </div>
+
       </form>
     </div>
   );
-
-  function formatTimeRemaining(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-  }
 };
 
 export default ConfirmSlot;

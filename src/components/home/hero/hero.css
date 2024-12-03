@@ -1,98 +1,62 @@
-/* Hero Section CSS */
-.hero-section {
+/* .hero-section {
   display: flex;
-  justify-content: flex-start; /* Align content to the left */
-  align-items: center; /* Vertically center the content */
+  justify-content: center;
+  align-items: center;
   padding: 50px;
   background-color: #f7f9fb;
-  position: relative;
-  height: 87.8vh;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.hero-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 85%;
-  height: 100%;
   background-image: url('../../assets/1.jpg');
-  background-position: center;
   background-size: cover;
-  background-repeat: no-repeat;
-  opacity: 1;
-  z-index: -1;
-  
+  background-position: center;
+  height: 80vh;
+  position: relative;
 }
 
 .hero-content {
   max-width: 600px;
-  z-index: 2;
-  text-align: left; /* Align all text to the left */
+  text-align: left;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .hero-content h1 {
-  font-size: 36px;
-  color: #ffffff;
-  line-height: 1.2; 
-  white-space: pre-line;
-  text-align: left; /* Ensure the heading is left-aligned */
-  margin-right: 0; /* Remove right margin */
-  margin-bottom: 20px; /* Space below heading */
-  background-image: url('../../assets/backHero.jpg');
-  opacity: 0.5;
-  width: 400px;
+  font-size: 48px;
+  margin-bottom: 20px;
+  line-height: 1.2;
 }
 
 .hero-content p {
   font-size: 18px;
-  margin: 20px 0;
-  text-align: left; /* Align paragraph to the left */
+  margin-bottom: 20px;
 }
 
-/* Updated Appointment Button CSS */
 .appointment-btn {
-  padding: 10px 30px;
   background-color: #00bfa6;
-  color: white;
+  color: #ffffff;
+  padding: 10px 20px;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
-  position: absolute; /* Position it relative to the .hero-section */
-  bottom: 20px; /* Distance from the bottom of the container */
-  left: -800px; /* Reset to the intended distance from the left */
-  z-index: 2; /* Ensure it stays above the background and other elements */
+  margin-top: 20px;
 }
 
-/* Updated Hero Stats CSS */
 .hero-stats {
   display: flex;
-  flex-direction: row; /* Arrange stats horizontally */
-  align-items: center; /* Vertically align the stats */
-  position: absolute; /* Position it relative to the .hero-section */
-  bottom: 20px; /* Distance from the bottom of the container */
-  right: 400px; /* Shift 100px to the left by changing the right value */
-  background-image: url('../../assets/backHero.jpg');
-  opacity: 0.5;
-  height: 80px;
+  gap: 30px;
+  margin-top: 20px;
 }
 
-.hero-stats .years,
-.hero-stats .satisfaction {
-  margin: 0 20px; /* Space between the stats */
+.hero-stats div {
+  text-align: center;
 }
 
-.hero-stats .years h3,
-.hero-stats .satisfaction h3 {
+.hero-stats h3 {
   font-size: 24px;
   margin: 0;
-  color: #ffffff;
 }
 
-.hero-stats .years p,
-.hero-stats .satisfaction p {
-  margin: 5px 0 0 0;
+.hero-stats p {
   font-size: 14px;
-  color: #f7f0f0;
-}
+  margin: 5px 0 0;
+} */

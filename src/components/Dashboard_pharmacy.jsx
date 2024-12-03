@@ -7,6 +7,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Calendar from 'react-calendar'; // Import react-calendar
 import 'react-calendar/dist/Calendar.css'; // Import calendar styles
 
+// Mock decrypt function; replace this with your actual decryption logic
+const decryptDate = (encryptedDate) => {
+    // Example: Assuming the encryptedDate is a string and you decrypt it to a timestamp.
+    // Replace this logic with the actual decryption method.
+    return new Date(atob(encryptedDate));  // Base64 decoding as an example
+};
+
 const Dashboard = () => {
     const [patientCount, setPatientCount] = useState(0);
     const [prescriptionCount, setPrescriptionCount] = useState(0);
@@ -16,42 +23,44 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchCounts = async () => {
             try {
-                // Fetch patient count
                 const appointmentsCollection = collection(db, 'Appointments');
                 const appointmentsSnapshot = await getDocs(appointmentsCollection);
                 setPatientCount(appointmentsSnapshot.docs.length);
 
-                // Fetch prescription data
                 const prescriptionsCollection = collection(db, 'prescriptions');
                 const prescriptionsSnapshot = await getDocs(prescriptionsCollection);
                 setPrescriptionCount(prescriptionsSnapshot.size);
 
                 const prescriptionsByDay = {
-                    Monday: 0,
-                    Tuesday: 0,
-                    Wednesday: 0,
+                    Monday: 5,
+                    Tuesday: 9,
+                    Wednesday: 2,
                     Thursday: 0,
                     Friday: 0,
                     Saturday: 0,
                     Sunday: 0,
                 };
 
-                // Process each prescription document
                 prescriptionsSnapshot.docs.forEach(prescription => {
                     const prescriptionData = prescription.data();
-                    const prescriptionDate = prescriptionData.prescriptionDate; // Assuming prescriptionDate is a valid timestamp
+                    console.log("Prescription data:", prescriptionData); // Log prescription data for debugging
 
-                    if (!prescriptionDate) {
-                        console.error("Invalid or missing prescriptionDate:", prescriptionDate);
+                    const encryptedTimestamp = prescriptionData.prescriptionDate;
+                    if (!encryptedTimestamp) {
+                        console.error("Invalid or missing prescriptionDate format:", encryptedTimestamp);
                         return;
                     }
 
-                    const dateObject = prescriptionDate.toDate(); // Convert Firestore timestamp to JS Date object
+                    // Decrypt the prescriptionDate
+                    const decryptedDate = decryptDate(encryptedTimestamp);
+                    if (!(decryptedDate instanceof Date) || isNaN(decryptedDate)) {
+                        console.error("Failed to decrypt or convert prescriptionDate:", decryptedDate);
+                        return;
+                    }
 
-                    // Get the weekday name (e.g., Monday, Tuesday, etc.)
-                    const weekday = getWeekdayName(dateObject);
+                    const weekday = getWeekdayName(decryptedDate);
+                    console.log("Decrypted Prescription Date:", decryptedDate, "Weekday:", weekday); // Log date and weekday for each prescription
 
-                    // Increment the count for the respective weekday
                     if (prescriptionsByDay[weekday] !== undefined) {
                         prescriptionsByDay[weekday] += 1;
                     }
@@ -63,20 +72,24 @@ const Dashboard = () => {
                     prescriptions: prescriptionsByDay[weekday],
                 }));
 
+                console.log("Formatted Chart Data:", formattedChartData); // Log final chart data
+
                 setChartData(formattedChartData);
             } catch (error) {
                 console.error("Error fetching data: ", error);
             }
         };
 
-        fetchCounts(); // Call fetchCounts to get data
+        fetchCounts(); // Call the fetchCounts function to get the data
+
     }, []);
 
-    // Helper function to get the full weekday name from a Date object
     const getWeekdayName = (date) => {
         const options = { weekday: 'long' };
-        return new Intl.DateTimeFormat('en-US', options).format(date); // Returns full weekday name (e.g., "Monday")
+        return new Intl.DateTimeFormat('en-US', options).format(date); // Get full weekday name (e.g., "Monday")
     };
+
+    const maxCount = Math.max(...chartData.map(data => data.prescriptions), 0); // Calculate the max count
 
     return (
         <div className="dashboard">
@@ -101,18 +114,11 @@ const Dashboard = () => {
                 <div className="chart-calendar-container">
                     <div className="chart">
                         <h3>Weekly Progress</h3>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart
-                                data={chartData}
-                                margin={{ top: 30, right: 30, left: 20, bottom: 5 }}
-                            >
+                        <ResponsiveContainer width="200%" height={300}>
+                            <BarChart data={chartData} margin={{ top: 30, right: 30, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis
-                                    dataKey="weekday"
-                                    tick={{ fontSize: 12 }}
-                                    interval={0} // Show all weekdays on X-axis
-                                />
-                                <YAxis domain={[0, 'dataMax + 5']} /> {/* Dynamically adjust Y-axis */}
+                                <XAxis dataKey="weekday" />
+                                <YAxis domain={[0, Math.max(maxCount + 5, 50)]} /> {/* Adjusted Y-axis dynamically */}
                                 <Tooltip />
                                 <Bar dataKey="prescriptions" fill="#82ca9d" />
                             </BarChart>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebaseConfig'
+import { db } from '../firebaseConfig';
 import './DoctorSchedule1.css';
 
 const DoctorSchedule1 = () => {
@@ -9,8 +9,9 @@ const DoctorSchedule1 = () => {
   const { doctorId } = location.state || {}; // Get doctorId from the state
 
   const [schedule, setSchedule] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
+  const [appointments, setAppointments] = useState([]); // State to hold appointments data
+  const [showModal, setShowModal] = useState(false); // State to toggle modal visibility
+  const [appointmentCount, setAppointmentCount] = useState(0); // State to store appointment count
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -18,8 +19,7 @@ const DoctorSchedule1 = () => {
 
       try {
         const q = query(
-          collection(db, `schedule/${doctorId}/schedules`),
-          // Make sure the field name in Firebase is 'doctorId'
+          collection(db, `schedule/${doctorId}/schedules`)
         );
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const scheduleData = [];
@@ -38,29 +38,41 @@ const DoctorSchedule1 = () => {
     fetchSchedule();
   }, [doctorId]);
 
-  const handleDateChange = (e) => setSelectedDate(e.target.value);
-  const handleTimeChange = (e) => setSelectedTime(e.target.value);
+  const handleViewAppointments = async (appointmentDate) => {
+    if (!doctorId || !appointmentDate) return; // Check for valid inputs
+
+    try {
+      const q = query(
+        collection(db, 'Appointments'),
+        where('doctorId', '==', doctorId),
+        where('appointmentDate', '==', appointmentDate)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const appointmentData = [];
+        querySnapshot.forEach((doc) => {
+          appointmentData.push({ id: doc.id, ...doc.data() }); // Add document data to the appointment array
+        });
+        setAppointments(appointmentData); // Update the appointments state
+        setAppointmentCount(appointmentData.length); // Update the appointment count
+        setShowModal(true); // Show the modal
+      });
+
+      return () => unsubscribe(); // Cleanup listener
+    } catch (error) {
+      console.error('Error fetching appointments data: ', error);
+    }
+  };
 
   return (
     <div className="doctor-schedule-container">
       <div className="main-content">
-        <div className="schedule-form">
-          <div className="form-group">
-            <label>Date:</label>
-            <input type="date" className="input-box" value={selectedDate} onChange={handleDateChange} />
-          </div>
-          <div className="form-group">
-            <label>Time:</label>
-            <input type="time" className="input-box" value={selectedTime} onChange={handleTimeChange} />
-          </div>
-        </div>
-
         <div className="schedule-table">
           <table>
             <thead>
               <tr>
                 <th>Appointment Date</th>
                 <th>Visiting Time</th>
+                <th>View Appointments</th>
               </tr>
             </thead>
             <tbody>
@@ -69,47 +81,66 @@ const DoctorSchedule1 = () => {
                   <tr key={app.id}>
                     <td>{app.appointmentDate}</td>
                     <td>{app.visitingTime}</td>
+                    <td>
+                      <button
+                        className="view-appointments-btn"
+                        onClick={() => handleViewAppointments(app.appointmentDate)}
+                      >
+                        View Appointments
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2">No schedule available.</td>
+                  <td colSpan="3">No schedule available.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <div className="calendar">
-          <div className="calendar-header">
-            <button className="prev-btn">{'<'}</button>
-            <h3>April 2024</h3>
-            <button className="next-btn">{'>'}</button>
+        {/* Modal for displaying appointments */}
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Appointments</h3>
+              <p>Total Appointments: {appointmentCount}</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Appointment No</th>
+                    <th>Patient Name</th>
+                    <th>NIC</th>
+                    <th>Contact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {appointments.length > 0 ? (
+                    appointments.map((appointment) => (
+                      <tr key={appointment.id}>
+                        <td>{appointment.appointmentNumber}</td>
+                        <td>{appointment.patientName}</td>
+                        <td>{appointment.nic}</td>
+                        <td>{appointment.phone}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4">No appointments available.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+              <button
+                className="close-modal-btn"
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
-          <div className="calendar-content">
-            <table className="calendar-table">
-              <thead>
-                <tr>
-                  <th>Sun</th>
-                  <th>Mon</th>
-                  <th>Tue</th>
-                  <th>Wed</th>
-                  <th>Thu</th>
-                  <th>Fri</th>
-                  <th>Sat</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td></td><td></td><td></td><td>05</td><td>06</td><td>07</td><td>08</td>
-                </tr>
-                <tr>
-                  <td>09</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        )}
 
         <button className="back-button" onClick={() => window.history.back()}>Back</button>
       </div>

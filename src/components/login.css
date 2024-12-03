@@ -8,7 +8,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url('../assets/images/homelogo.jpg');
+
   background-size: cover;
   background-position: center;
   height: 100vh;

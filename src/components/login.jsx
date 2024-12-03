@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase-config'; // Import the Firestore database
+import { db } from '../firebaseConfig'; // Import the Firestore database
 import './login.css'; // Ensure the CSS path is correct
-import logo from '../assets/images/logomedi.png';
+import logo from '../components/assets/logomedi.png';
 
 function Home() {
   const [userName, setUsername] = useState('');
@@ -28,7 +28,7 @@ function Home() {
         const doctorId = doctorDoc.id;
 
         // Successful login, navigate to the dashboard with doctorId
-        navigate('/dash', { state: { doctorId } });
+        navigate('/doctor-schedule', { state: { doctorId } });
       }
     } catch (err) {
       setError("Failed to log in. Please try again.");

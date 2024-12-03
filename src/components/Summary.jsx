@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Summary.css';
 import { db } from '../firebaseConfig';
-import { collection, doc, getDoc, setDoc, getDocs } from 'firebase/firestore'; 
+import { collection, doc, getDoc, setDoc, getDocs } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import CryptoJS from 'crypto-js';
@@ -61,7 +61,7 @@ const Summary = () => {
     const imgData = canvas.toDataURL('image/png');
 
     // Check if imgData is in the correct format
-    if (!imgData.startsWith('data:image/png;base64,' )) {
+    if (!imgData.startsWith('data:image/png;base64,')) {
       console.error("Image data URL is not properly formatted");
       alert('Failed to capture image. Please try again.');
       return;
@@ -102,7 +102,7 @@ const Summary = () => {
       // Upload encrypted image to Firebase Storage
       const storage = getStorage();
       const imageRef = ref(storage, `prescriptions/${prescriptionId}.png`);
-      
+
       // Ensure we upload the encrypted image directly as a base64 string
       await uploadString(imageRef, encryptedImgData, 'base64'); // Correctly specify base64 format
       console.log("Image uploaded to Firebase Storage");
@@ -181,7 +181,7 @@ const Summary = () => {
               <td>{med.instruction}</td>
               <td>{med.days}</td>
             </tr>
-          ))} 
+          ))}
         </tbody>
       </table>
 

@@ -1,38 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from '../firebaseConfig'; 
+import { db } from '../firebaseConfig';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './DoctorProfile.css';
 
 const DoctorProfile = () => {
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isEditable, setIsEditable] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
-    
+
     const location = useLocation();
-    const navigate = useNavigate(); // Initialize navigate for routing
-    const { doctorId } = location.state || {}; 
+    const navigate = useNavigate();
+    const { doctorId } = location.state || {};
 
     useEffect(() => {
-        console.log("Doctor ID:", doctorId); // Debugging line
-
         if (!doctorId) {
-            console.error("No doctor ID found in location state.");
             setLoading(false);
-            return; // Exit the effect early if doctorId is not defined
+            return;
         }
 
         const fetchDoctorData = async () => {
             try {
                 const doctorRef = doc(db, "Doctors", doctorId);
                 const docSnap = await getDoc(doctorRef);
-                
+
                 if (docSnap.exists()) {
                     setDoctor(docSnap.data());
-                    console.log("Doctor data fetched:", docSnap.data());
                 } else {
-                    console.warn("No such document! Check Firestore for doctorId:", doctorId);
+                    console.warn("No such document!");
                 }
             } catch (error) {
                 console.error("Error fetching doctor data: ", error.message);
@@ -44,28 +39,22 @@ const DoctorProfile = () => {
         fetchDoctorData();
     }, [doctorId]);
 
-    // Check loading state or if doctor is null
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
     if (!doctor) {
-        return <div>No doctor data available</div>;
+        return <div className="flex justify-center items-center h-screen">No doctor data available</div>;
     }
 
-    const handleEdit = () => {
-        setIsEditable(true);
-    };
+    const handleEdit = () => setIsEditable(true);
 
     const handleSave = async () => {
         try {
-            // Update Firestore with new doctor data
             const doctorRef = doc(db, "Doctors", doctorId);
-            await updateDoc(doctorRef, doctor); // Update doctor data in Firestore
-            setShowPopup(true); // Show popup after saving
-            setTimeout(() => {
-                setShowPopup(false);
-            }, 2000);
+            await updateDoc(doctorRef, doctor);
+            setShowPopup(true);
+            setTimeout(() => setShowPopup(false), 2000);
         } catch (error) {
             console.error("Error updating doctor data: ", error.message);
         } finally {
@@ -75,142 +64,99 @@ const DoctorProfile = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setDoctor((prevDoctor) => ({ ...prevDoctor, [name]: value })); // Update the doctor state
+        setDoctor((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleLogout = () => {
-        // Clear any authentication state if needed (this depends on your auth setup)
-        // For example: auth.signOut(); // Uncomment if using Firebase Auth
-
-        // Navigate to the login page
-        navigate('/login');
-    };
+    const handleLogout = () => navigate('/login');
 
     return (
-        <div className="doctor-profile">
-            <div className="doctor-header">
-                <img
-                    src={doctor.photo || '/default-profile.png'} // Use 'photo' field
-                    alt={`${doctor.doctorName}'s profile`}
-                    className="doctor-img"
-                />
-                <h1 className="doctor-name">{doctor.doctorName}</h1>
-                <p className="doctor-biography">{doctor.biography}</p>
-            </div>
+        <div className="min-h-screen flex flex-col items-center py-10">
+            <div className="bg-white shadow-lg rounded-lg w-full max-w-3xl p-8">
+                {/* Doctor Profile */}
+                <div className="flex flex-col items-center mb-6">
+                    <img
+                        src={doctor.photo || '/default-profile.png'}
+                        alt={`${doctor.doctorName}'s profile`}
+                        className="w-32 h-32 rounded-full object-cover shadow-md mb-4 border-4 border-blue-500"
+                    />
+                    <h1 className="text-2xl font-bold text-gray-800">{doctor.doctorName}</h1>
+                    <p className="text-sm text-gray-600 text-center px-4 mt-2">
+                        {doctor.biography || "No biography available."}
+                    </p>
+                </div>
 
-            <div className="doctor-details">
-                <h2 className="doctor-details-title">Details</h2>
-                <p className="doctor-specialization">
-                    <strong>Specialization:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="text" 
-                            name="specialization" 
-                            value={doctor.specialization} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.specialization
-                    )}
-                </p>
-                <p className="doctor-contact">
-                    <strong>Contact:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="text" 
-                            name="phoneNumber" 
-                            value={doctor.phoneNumber} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.phoneNumber
-                    )}
-                </p>
-                <p className="doctor-email">
-                    <strong>Email:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="email" 
-                            name="email" 
-                            value={doctor.email} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.email
-                    )}
-                </p>
-                <p className="doctor-hospital">
-                    <strong>Hospital:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="text" 
-                            name="hospital" 
-                            value={doctor.hospital} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.hospital
-                    )}
-                </p>
-                <p className="doctor-dob">
-                    <strong>Date of Birth:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="date" 
-                            name="dob" 
-                            value={doctor.dob} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.dob
-                    )}
-                </p>
-                <p className="doctor-nic">
-                    <strong>NIC:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="text" 
-                            name="nic" 
-                            value={doctor.nic} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.nic
-                    )}
-                </p>
-                <p className="doctor-status">
-                    <strong>Status:</strong> 
-                    {isEditable ? (
-                        <input 
-                            type="text" 
-                            name="status" 
-                            value={doctor.status} 
-                            onChange={handleChange}
-                        />
-                    ) : (
-                        doctor.status
-                    )}
-                </p>
-            </div>
+                {/* Doctor Details */}
+                <div className="space-y-6">
+                    {[
+                        { label: "Specialization", key: "specialization", icon: "🩺" },
+                        { label: "Contact", key: "phoneNumber", icon: "📞" },
+                        { label: "Email", key: "email", icon: "📧" },
+                        { label: "Hospital", key: "hospital", icon: "🏥" },
+                        { label: "Date of Birth", key: "dob", icon: "🎂", type: "date" },
+                        { label: "NIC", key: "nic", icon: "🆔" },
+                        { label: "Status", key: "status", icon: "📋" },
+                    ].map(({ label, key, icon, type = "text" }) => (
+                        <div key={key} className="flex items-start">
+                            <span className="text-2xl bg-blue-100 text-blue-600 p-2 rounded-lg">
+                                {icon}
+                            </span>
+                            <div className="ml-4 flex flex-col w-full">
+                                <label className="text-sm font-medium text-gray-700">{label}</label>
+                                {isEditable ? (
+                                    <input
+                                        type={type}
+                                        name={key}
+                                        value={doctor[key] || ""}
+                                        onChange={handleChange}
+                                        className="mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200"
+                                    />
+                                ) : (
+                                    <p className="mt-1 text-gray-800 text-lg">
+                                        {doctor[key] || "N/A"}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
 
-            <div className="user-profile-buttons">
-                {!isEditable ? (
-                    <button className="user-profile-edit-button" onClick={handleEdit}>
-                        Edit
+                {/* Action Buttons */}
+                <div className="mt-8 flex justify-end gap-4">
+                    {isEditable ? (
+                        <>
+                            <button
+                                onClick={handleSave}
+                                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 shadow-md transition justify-start"
+                            >
+                                Save
+                            </button>
+                            {/* <button
+                                onClick={() => setIsEditable(false)}
+                                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 shadow-md transition"
+                            >
+                                Cancel
+                            </button> */}
+                        </>
+                    ) : (
+                        <button
+                            onClick={handleEdit}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 shadow-md transition justify-start"
+                        >
+                            Edit Details
+                        </button>
+                    )}
+                    <button
+                        onClick={handleLogout}
+                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 shadow-md transition"
+                    >
+                        Logout
                     </button>
-                ) : (
-                    <button className="user-profile-save-button" onClick={handleSave}>
-                        Save
-                    </button>
-                )}
-                <button className="user-profile-logout-button" onClick={handleLogout}>
-                    Logout
-                </button>
+                </div>
             </div>
 
-            {/* Popup for showing success message */}
+            {/* Popup Notification */}
             {showPopup && (
-                <div className="popup-message">
+                <div className="fixed top-4 right-4 bg-green-100 text-green-800 px-4 py-2 rounded-md shadow-lg">
                     Profile updated successfully!
                 </div>
             )}

@@ -68,7 +68,7 @@ const SideBar = () => {
             className="sidebar-profile-pic"
           />
           <div className="sidebar-profile-info">
-            <h2>{doctorData?.doctorName|| 'Dr. Unknown'}</h2>
+            <h2>{doctorData?.doctorName || 'Dr. Unknown'}</h2>
             <p>{doctorData?.biography || 'MBBS, MD'}</p>
           </div>
         </div>
@@ -92,14 +92,14 @@ const SideBar = () => {
             <FaCalendarAlt className="icon" /> Doctor Schedule
           </div>
         </li>
-        <div
+        {/* <div
             onClick={handleNavigateToAddPrescription}
             className={location.pathname === '/prescription' ? 'active' : ''}
             style={{ cursor: 'pointer' }}
           >
             <FaFileAlt className="icon" /> Prescription
-          </div>
-        
+          </div> */}
+
         <li>
           <div
             onClick={handleNavigateToAppointment}
@@ -109,11 +109,11 @@ const SideBar = () => {
             <FaPills className="icon" /> Appointment
           </div>
         </li>
-        <li>
+        {/* <li>
           <Link to="/MedicalHistory" className={location.pathname === '/MedicalHistory' ? 'active' : ''}>
             <FaCalendarCheck className="icon" /> Medical History
           </Link>
-        </li>
+        </li> */}
       </ul>
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}

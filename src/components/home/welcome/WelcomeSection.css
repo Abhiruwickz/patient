@@ -1,4 +1,4 @@
-.welcome-section {
+/* .welcome-section {
   text-align: center;
   padding: 50px;
   background-color: #f9f9f9;
@@ -7,30 +7,19 @@
 .welcome-title {
   font-size: 36px;
   color: #1B3C7D;
-  margin-left: 400px;
-}
-
-.welcome-title .welcome-mediconnect {
-  color: #20b2aa;
-  
+  margin-bottom: 20px;
 }
 
 .welcome-subtitle {
-  font-size: 36px;
-  color: #1B3C7D;
-  margin: 10px 0;
-  margin-right: 350px;
-}
-
-.welcome-subtitle-span {
+  font-size: 28px;
   color: #333;
+  margin-bottom: 20px;
 }
 
 .welcome-description {
   font-size: 16px;
   color: #333;
+  max-width: 800px;
+  margin: 0 auto;
   line-height: 1.8;
-  margin: 20px auto;
-  max-width: 600px;
-  margin-left: 330px;
-}
+} */

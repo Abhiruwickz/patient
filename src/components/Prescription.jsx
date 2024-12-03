@@ -62,7 +62,7 @@ const AddPrescription = () => {
   const handleSelectMedicine = (medicine) => {
     setInputMedicineName(medicine.medicineName);
     setSelectedMedicine(medicine);
-    setMedicineType(medicine.medicineType); 
+    setMedicineType(medicine.medicineType);
     setSuggestions([]);
   };
 

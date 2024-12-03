@@ -1,78 +1,155 @@
 .prescriptions-list {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    height: 200%;
-    margin-left: 3%;
-  }
-  
-  .prescriptions-list h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 90%;
+  /* Adjusted for responsiveness */
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: auto;
+  /* Ensure the content is scrollable on smaller screens */
+}
+
+.prescriptions-list h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow the input and button to wrap on smaller screens */
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  padding: 10px;
+  width: 70%;
+  /* Make input take up most of the space */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.search-bar button {
+  padding: 5px 10px;
+  background-color: #7abaff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+  width: 25%;
+  /* Button width is reduced */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.status-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3b546d;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  /* Add transition for smoother effect */
+}
+
+.status-button:hover {
+  background-color: #3b546d;
+  transform: scale(1.05);
+  /* Slightly enlarge on hover */
+}
+
+.status-button.completed {
+  background-color: #28a745;
+  /* Green background when completed */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .search-bar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    flex-direction: column;
   }
-  
+
   .search-bar input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .search-bar button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  table {
     width: 100%;
-    border-collapse: collapse;
-    height: 200%;
+    /* Full width for input on smaller screens */
   }
-  
-  th, td {
+
+  .search-bar button {
+    width: 100%;
+    /* Full width for button */
+    margin-top: 10px;
+    /* Add margin for spacing */
+  }
+
+  .prescriptions-list {
+    width: 100%;
+    /* Full width on smaller screens */
+  }
+
+  th,
+  td {
+    padding: 8px;
+    /* Adjust padding for smaller screens */
+  }
+
+  table {
+    font-size: 0.9rem;
+    /* Slightly reduce font size */
+  }
+}
+
+@media (max-width: 480px) {
+  .prescriptions-list {
     padding: 10px;
-    text-align: left;
-    border: 1px solid #ccc;
   }
-  
-  th {
-    background-color: #f2f2f2;
+
+  .search-bar input,
+  .search-bar button {
+    padding: 8px;
+    /* Smaller padding on mobile */
   }
-  
-  button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+
+  th,
+  td {
+    padding: 6px;
+    /* Further adjust padding */
+    font-size: 0.85rem;
+    /* Smaller font size for mobile */
   }
+
+  button,
   .status-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s; /* Add transition for smoother effect */
+    padding: 5px;
+    /* Reduce button size for smaller screens */
   }
-  
-  .status-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.05); /* Slightly enlarge on hover */
-  }
-  
-  .status-button.completed {
-    background-color: #28a745; /* Green background when completed */
-  }
-  
+}

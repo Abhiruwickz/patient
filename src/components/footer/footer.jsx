@@ -1,38 +1,53 @@
 import React from 'react';
-import './footer.css';  // Import the module CSS
+import logo1 from '../../components/assets/logomedi.png'
 
 const Footer = () => {
   return (
-      <footer className="footer-container">
-          <div className="footer-section">
-              <h2 className="footer-title">MediConnect</h2>
-              <p className="footer-description">
-                  Committed to delivering exceptional healthcare across a range of specialties for more than 5 years
-              </p>
-          </div>
-          <div className="footer-section">
-              <h3 className="footer-subtitle">Contact Us</h3>
-              <p className="footer-contact-header">MediConnect Channeling Center</p>
-              <p className="footer-contact">Phone numbers:</p>
-              <p className="footer-phone">+94 123456878</p>
-              <p className="footer-phone">+94 9876757423</p>
-              <p className="footer-E">Email: <a href="mailto:mediconnect@gmail.com" className="footer-email">mediconnect@gmail.com</a></p>
-              <p className="footer-follow">FOLLOW US ON</p>
-              <div className="footer-icons">
-                  <span className="footer-icon">F</span>
-                  <span className="footer-icon">P</span>
-                  <span className="footer-icon">I</span>
-                  <span className="footer-icon">T</span>
-              </div>
-          </div>
-          <div className="footer-section">
-              <h3 className="footer-subtitle">MediConnect Pharmacy</h3>
-              <p className="footer-contact">Phone numbers:</p>
-              <p className="footer-phone">+94 712789890</p>
-              <p className="footer-phone">+94 011500001</p>
-              <p className="footer-contact">Email: <a href="mailto:mediconpharmacy@gmail.com" className="footer-email">mediconpharmacy@gmail.com</a></p>
-          </div>
-      </footer>
+    <footer className="bg-blue-500 text-white p-10 flex justify-between items-start border-t-4 border-white w-full ">
+      {/* Left Box - Logo and Description */}
+      <div className="flex flex-col items-start w-1/3 border-2 border-slate-200  h-[250px]">
+        <div className="mb-4">
+          <img src={logo1} alt="MediConnect Logo" className="h-[200px] w-auto" />
+        </div>
+        <p className="text-sm -mt-10 ml-2 ">
+          Committed to delivering exceptional healthcare across a range of specialties for more than 5 years.
+        </p>
+      </div>
+
+      {/* Middle Box - Contact Information */}
+      <div className="flex flex-col items-start w-1/2 h-[250px] px-4 border-2 border-slate-200">
+        <h3 className="text-base font-bold mb-2">Contact Us</h3>
+        <p className="font-semibold">MediConnect Channeling Center</p>
+        
+        <p className="text-sm">Phone numbers:</p>
+        <p className="text-sm">+94 123456878</p>
+        <p className="text-sm">+94 9876757423</p>
+        <div className='flex flex-row'>
+        <p className="text-sm">
+          Email: <a href="mailto:mediconnect@gmail.com" className="underline hover:text-gray-200">mediconnect@gmail.com</a>
+        </p>
+        </div>
+        <p className="mt-4 font-semibold">FOLLOW US ON</p>
+        <div className="flex gap-3 mt-2">
+          <img src="/path/to/facebook-icon.png" alt="Facebook" className="h-8 w-8" />
+          <img src="/path/to/instagram-icon.png" alt="Instagram" className="h-8 w-8" />
+          <img src="/path/to/twitter-icon.png" alt="Twitter" className="h-8 w-8" />
+          <img src="/path/to/linkedin-icon.png" alt="LinkedIn" className="h-8 w-8" />
+        </div>
+      </div>
+
+      {/* Right Box - Pharmacy Information */}
+      <div className="flex flex-col items-start w-1/2 h-[250px] px-4 border-2 border-slate-200">
+        <h3 className="text-base font-bold mb-2">MediConnect Pharmacy</h3>
+        <p className="text-sm">Phone numbers:</p>
+        <p className="text-sm">+94 712789890</p>
+        <p className="text-sm">+94 011500001</p>
+        <p className="text-sm">
+          Email: <a href="mailto:mediconpharmacy@gmail.com" className="underline hover:text-gray-200">mediconpharmacy@gmail.com</a>
+        </p>
+      </div>
+    </footer>
   );
 };
+
 export default Footer;

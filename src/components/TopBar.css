@@ -1,62 +1,107 @@
 .topbar {
-    width: calc(100% - 270px); /* Adjust width by subtracting sidebar width */
-    height: 70px; /* Keeps the height fixed */
-    background-color: rgb(255, 255, 255); /* White background */
-    color: rgb(0, 0, 0); /* Black text */
     display: flex;
-    justify-content: space-between; /* Space content to the edges */
-    align-items: center; /* Vertically align items in the center */
-    padding: 0 30px; /* Horizontal padding */
-    position: fixed; /* Fix at the top */
-    top: 0;
-    left: 270px; /* Start after the sidebar with a width of 270px */
-    right: 0;
-    z-index: 1000; /* Ensures top bar stays on top of other elements */
-    margin: 1px 15px; /* Adds margin on the left and right for some space */
-    border-radius: 15px; /* Curved corners */
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f4ff;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dcdde1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
 }
 
-/* Greeting section with vertical alignment */
 .greeting-container {
     display: flex;
-    flex-direction: column; /* Stack the greeting and subtitle vertically */
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-start; /* Align text to the left */
+    max-width: 50%;
 }
 
 .greeting {
-    font-size: 1.2em; /* Adjusted font size for visibility */
-    color: rgba(42, 163, 144, 1);
+    font-size: 22px;
+    color: #3a76f0;
     font-weight: bold;
+    margin: 0;
 }
 
 .subtitle {
-    font-size: 0.9em; /* Slightly smaller subtitle */
-    color: #777; /* Lighter color for subtitle */
+    font-size: 14px;
+    color: #6b7280;
+    margin: 2px 0 0;
 }
 
-/* Right section containing the bell icon and user info */
 .right-section {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
 }
 
 .notification-icon {
-    font-size: 1.5em; /* Makes the icon slightly bigger */
-    margin-right: 20px; /* Space between bell and user info */
+    font-size: 24px;
+    color: #3a76f0;
     cursor: pointer;
+    transition: color 0.3s ease;
+
+}
+
+.notification-icon:hover {
+    color: #2d5cc5;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between username and image */
+    cursor: pointer;
 }
 
 .profile-image {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%; /* Circular profile image */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Adds a small shadow around the image */
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 2px solid #d1d9ff;
+}
+
+.admin-name {
+    font-size: 18px;
+    color: #374151;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-left: 200px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 15px;
+    }
+
+    .greeting-container {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .right-section {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .notification-icon {
+        font-size: 22px;
+        color: #3a76f0;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        margin-left: 20px;
+        /* Use margin-left to move the icon to the right */
+    }
+
+    .user-info {
+        justify-content: flex-end;
+        width: 100%;
+    }
 }

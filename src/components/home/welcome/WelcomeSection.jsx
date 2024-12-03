@@ -1,20 +1,18 @@
 import React from 'react';
-import './WelcomeSection.css';
 
 const WelcomeSection = () => {
   return (
-    <div className="welcome-section">
-      <h1 className="welcome-title">
-        Your Health, Our Priority 
-        <span className="welcome-mediconnect"></span>
+    <div className=" text-center py-16 bg-gray-100">
+      <h1 className="text-4xl font-bold text-blue-900">
+        Your Health, Our Priority
       </h1>
-      <h2 className="welcome-subtitle">
+      <h1 className="text-4xl text-blue-900 mb-10 font-bold">
         Compassionate, Innovative, and Dedicated Care
-        <span className='welcome-subtitle-span'></span>
-      </h2>
-      
-      <p className="welcome-description">
-        Transform your healthcare journey with MediConnect – an all-in-one system connecting you to seamless care, from appointments to prescriptions. Experience convenience, compassion, and complete control over your health.
+      </h1>
+      <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        Transform your healthcare journey with <span className="font-semibold text-blue-800">MediConnect</span> – 
+        an all-in-one system connecting you to seamless care, from appointments to prescriptions. 
+        Experience convenience, compassion, and complete control over your health.
       </p>
     </div>
   );

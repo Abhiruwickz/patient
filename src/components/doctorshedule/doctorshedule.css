@@ -1,126 +1,171 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f8f8;
-  width: 1650px;
-  overflow-x: hidden;
-}
-
 .doctor-schedule-container {
-  margin: 0 auto;
-  padding: 20px;
-  width: 1200px;
-  margin-right: 400px;
-}
-
-/* Doctor Card */
-.doctor-schedule-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin: 30px 0;
+  align-items: center;
+  background-color: #f5f7fa;
+  font-family: Arial, sans-serif;
   padding: 20px;
-  background-color: white;
-  border: 3px solid black;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  width: 500px;
-  margin-left: 500px;
-  margin-top: 100px;
 }
 
-.doctor-schedule-separator-line {
-  width: 65%;
-  border-top: 1px solid black;
-  margin: 10px 0;
-  margin-top: 20px;
+.top-bar {
+  width: 100%;
+  background-color: #2a3b8f;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.doctor-schedule-h3{
-  display: block;
-  font-size: 1.17em;
-  margin-block-start: 1em;
-  margin-block-end: 1em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
+
+.top-bar .logo {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar .logo img {
+  height: 35px;
+  margin-right: 10px;
+}
+
+.top-bar .logo h1 {
+  font-size: 20px;
   font-weight: bold;
-  unicode-bidi: isolate;
-  margin-left: 100px;
+  color: #fff;
+  margin: 0;
+}
+
+.top-bar .notification-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.doctor-schedule-card {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 800px;
+  margin-top: 20px;
+  padding: 20px;
+
 }
 
 .doctor-schedule-img {
-  width: 200px;
-  height: 200px;
   border-radius: 8px;
-  margin-right: 30px;
-  margin-top: -100px;
-  margin-left: 80px;
-  border: 10px solid black;
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  margin-right: 20px;
+  margin-left: -1100px;
+}
+
+.doctor-schedule-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .doctor-schedule-info h2 {
-  font-size: 28px;
-  color: #2c3e50;
+  font-size: 22px;
+  color: #2a3b8f;
+  margin: 0;
 }
 
 .doctor-schedule-info p {
-  font-size: 18px;
-  color: #00d374;
-  margin-bottom: 15px;
-  margin-left: 100px;
+  font-size: 16px;
+  color: #666;
+  margin: 5px 0;
+}
+
+.doctor-schedule-separator-line {
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+  margin: 10px 0;
+}
+
+.doctor-schedule-h3 {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
 }
 
 .doctor-schedule-appointment-table {
-  margin-top: 30px;
+  width: 90%;
+  max-width: 800px;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  text-align: left;
 }
 
-th, td {
+table thead {
+  background-color: #f5f7fa;
+  font-size: 14px;
+}
+
+table th,
+table td {
   padding: 15px;
-  text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-th {
-  background-color: #f2f2f2;
+table th {
+  font-weight: bold;
 }
 
 .doctor-schedule-book-button {
-  background-color: #2effe6;
-  color: white;
-  padding: 5px 15px;
+  background-color: #2a3b8f;
+  color: #fff;
+  padding: 8px 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .doctor-schedule-book-button:hover {
-  background-color: #09e3cc;
+  background-color: #1f2f70;
 }
 
-.unavailable-button {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 5px 15px;
+.doctor-schedule-unavailable {
+  background-color: #ff4d4d;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#go-back-button {
+  background-color: #2a3b8f;
+  color: white;
+  padding: 8px 16px;
   border: none;
   border-radius: 5px;
+  margin-top: 20px;
+  cursor: pointer;
 }
 
-.unavailable-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+@media (max-width: 768px) {
 
-.status-label {
-  color: #6c757d;
+  .doctor-schedule-card,
+  .doctor-schedule-appointment-table {
+    width: 95%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  table th,
+  table td {
+    font-size: 12px;
+  }
 }

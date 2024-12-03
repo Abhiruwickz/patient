@@ -5,15 +5,19 @@
 }
 
 .profile-content {
-  background-color: #f9f9f9; /* Light background for profile content */
-  border-radius: 8px; /* Rounded corners */
+  background-color: #f9f9f9;
+  /* Light background for profile content */
+  border-radius: 8px;
+  /* Rounded corners */
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
 }
 
 .profile-form {
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
 }
 
 .profile-title-group,
@@ -22,33 +26,45 @@
 .profile-displayname-group,
 .profile-contactno-group,
 .profile-nic-group {
-  margin-bottom: 15px; /* Space between form groups */
+  margin-bottom: 15px;
+  /* Space between form groups */
 }
 
 .profile-buttons {
   display: flex;
-  justify-content: space-between; /* Space between buttons */
+  justify-content: space-between;
+  /* Space between buttons */
 }
 
 .profile-cancel-btn,
 .profile-update-btn {
-  padding: 10px 15px; /* Button padding */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer on hover */
+  padding: 10px 15px;
+  /* Button padding */
+  border: none;
+  /* Remove border */
+  border-radius: 5px;
+  /* Rounded corners */
+  cursor: pointer;
+  /* Pointer on hover */
 }
 
 .profile-cancel-btn {
-  background-color: #e0e0e0; /* Light grey for cancel button */
+  background-color: #e0e0e0;
+  /* Light grey for cancel button */
 }
 
 .profile-update-btn {
-  background-color: #007bff; /* Blue for update button */
-  color: white; /* White text for update button */
+  background-color: #007bff;
+  /* Blue for update button */
+  color: white;
+  /* White text for update button */
 }
 
 .profile-footer {
-  margin-top: 20px; /* Space above footer */
-  text-align: center; /* Centered footer text */
-  font-size: 14px; /* Smaller font size */
+  margin-top: 20px;
+  /* Space above footer */
+  text-align: center;
+  /* Centered footer text */
+  font-size: 14px;
+  /* Smaller font size */
 }

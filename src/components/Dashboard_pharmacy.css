@@ -5,12 +5,14 @@
     padding: 20px;
     font-family: Arial, sans-serif;
     background-color: #ffffff;
+
 }
 
 .stats {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    margin-top: 4%;
 }
 
 .stat-item {
@@ -53,14 +55,15 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    width: 100%;
 }
 
 .chart {
     background-color: #fff;
     border-radius: 10px;
     padding: 20px;
-  
-    width: 48%;
+
+    width: 100%;
     margin-bottom: 20px;
 }
 
@@ -104,34 +107,78 @@
         color: #ffc107;
     }
 }
-.recent-sales{
+
+.recent-sales {
     margin-bottom: 25%;
     margin-right: 10%;
     margin-top: 2%;
 }
-.container3{
+
+.container3 {
     margin-bottom: -70%;
     margin-top: 15%;
 }
+
 .chart-calendar-container {
     display: flex;
     justify-content: space-between;
     gap: 500px;
+    width: 100%;
 }
 
 .chart {
+
     flex: 2;
-    width: 100%;
+    width: 200%;
     color: #ffc107;
-    margin-top: 1%;
+    margin-top: 8%;
 }
 
 .calendar-container {
     flex: 1;
 
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left :0%;
+    margin-left: 0%;
+    margin-top: 10%;
+}
+
+.recharts-surface {
+    width: 100%;
+    color: #82ca9d;
+}
+
+/* Dashboard_pharmacy.css */
+.react-calendar {
+    /* General calendar styles */
+    font-family: Arial, sans-serif;
+}
+
+.react-calendar__tile {
+    color: black;
+    /* Set text color for days to black */
+}
+
+.react-calendar__tile--active {
+    background: #82ca9d;
+    /* Example: active day background color */
+    color: rgb(0, 0, 0);
+    /* Active day text color */
+}
+
+.react-calendar__tile--now {
+    font-weight: bold;
+    color: #333;
+    /* Example: style for today’s date */
+}
+
+.react-calendar__month-view__header {
+    color: rgb(0, 0, 0);
+    /* Color for month and year header */
+}
+
+.react-calendar__month-view__weekdays {
+    color: black;
 }

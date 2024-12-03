@@ -1,50 +1,128 @@
-.doctor-schedule {
+.doctor-schedule-container {
+    display: flex;
+    background-color: #f8f9fc;
     padding: 20px;
+    min-height: 100vh;
 }
 
-.schedule-btn {
-    background-color: #0AA1DD;
-    color: white;
-    padding: 10px 20px;
+.main-content {
+    flex: 1;
+    margin: 0;
+    /* Remove any margin */
+}
+
+.schedule-table {
+    margin-top: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    padding: 30px;
+    width: 100%;
+    /* Make the table occupy full width */
+    margin: 0;
+    /* Remove any margin to make it full-width */
+}
+
+.schedule-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 24px;
+    /* Larger font size for better readability */
+}
+
+.schedule-table th,
+.schedule-table td {
+    padding: 25px;
+    /* Larger padding for more spacious cells */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.schedule-table th {
+    background-color: #d1d9ff;
+    font-size: 26px;
+    /* Larger font size for the header */
+}
+
+.schedule-table td {
+    font-size: 24px;
+    /* Increase font size for table data */
+}
+
+.schedule-table tr:hover {
+    background-color: #e9ecf3;
+}
+
+.back-button {
+    margin-top: 20px;
+    background: #3c51d7;
+    color: #ffffff;
+    padding: 18px 36px;
+    /* Increase button size */
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
+    font-size: 18px;
+    /* Larger font size for the button text */
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.back-button:hover {
+    background: #2a3eb1;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .schedule-table table {
+        font-size: 22px;
+        /* Slightly reduce font size on smaller screens */
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+        padding: 20px;
+        /* Adjust padding for smaller screens */
+    }
+
+    .back-button {
+        padding: 15px 30px;
+        /* Adjust button size for smaller screens */
+        font-size: 16px;
+    }
 }
 
-th, td {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
-
-thead {
-    background-color: #f2f2f2;
-}
-
-.active-status {
-    color: green;
-    font-weight: bold;
-}
-
-.action-btn {
-    background: none;
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .close-modal-btn {
+    margin-top: 20px;
+    background: #ff4d4d;
+    color: white;
     border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    color: #FF6F6F; /* Change to a red color for the delete button */
-    font-size: 16px; /* Adjust font size as needed */
-}
-
-.action-btn:hover {
-    color: #FF3B3B; /* Darker red on hover */
-}
+  }
+  
+  .close-modal-btn:hover {
+    background: #e60000;
+  }
+  

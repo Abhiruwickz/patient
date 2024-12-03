@@ -1,34 +1,21 @@
-.map-section {
-  padding: 50px;
+/* .map-section {
+  padding: 20px;
   text-align: center;
-  width: 1300px;
-  margin-top: 0px;
-  margin-left: -73px;
+  background-color: #FFFFFF;
+  margin-top: 0;
 }
 
 .gmap-frame {
-  margin: 0 auto;
-  width: 1300px;
-  height: 550px;
+  width: 100%;
+  max-width: 1200px;
+  height: 500px;
   border: 2px solid #ccc;
   border-radius: 10px;
-  transform: translateX(50px); 
+  margin: 0 auto 20px;
 }
-  
-  .map-section h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-  }
-  
-  .map-section p {
-    color: #00a99d;
-  }
-  
-  .map-image {
-    margin-top: 20px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    width: 80px;
-    
-  }
-  
+
+.info-disclaimer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 20px;
+} */

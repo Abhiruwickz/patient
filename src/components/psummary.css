@@ -1,92 +1,218 @@
-.prescription-container {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    border: 2px solid #B0E0E6;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f8faff;
-    margin-left: 1000px;
+/* Global Styles */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(255, 255, 255);
+  color: #0f0f0f;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100%;
+  width: 100%;
+}
+.pretitle{
+margin-left: 45%;
+}
+
+
+/* Prescription Card Styles */
+.prescription-card {
+  width: 850px;
+  height: 50%;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #E3EDFF;
+  font-family: Arial, sans-serif;
+  font-size: x-small;
+  margin-top: 0%;
+  margin-right: 7%;
+}
+
+/* Header Styling */
+.headerpre {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.doctor-info h2 {
+  color: #007bff;
+  margin: 0;
+}
+
+.doctor-info p {
+  margin: 3px 0;
+  color: #333;
+}
+
+.clinic-logo span {
+  font-size: 18px;
+  color: #007bff;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Patient Info Section */
+.patient-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.patient-details p,
+.prescription-meta p {
+  margin: 3px 0;
+}
+
+/* Medicine Table Styling */
+.medicine-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: #E3EDFF;
+}
+
+.medicine-table th,
+.medicine-table td {
+  border: 1px solid #E3EDFF;
+  padding: 10px;
+  text-align: left;
+}
+
+.medicine-table th {
+  background-color: #E3EDFF;
+}
+
+.medicine-table td {
+  background-color: #E3EDFF;
+}
+
+.medicine-table tr:nth-child(even) td {
+  background-color: #E3EDFF;
+}
+
+/* Advice Section Styling */
+.advice {
+  background-color: #e7f3ff;
+  padding: 10px;
+  border: 1px solid #cce5ff;
+  margin-bottom: 20px;
+}
+
+.advice p {
+  margin: 5px 0;
+}
+
+/* Footer Section */
+.footer {
+  text-align: right;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.footer p {
+  margin: 5px 0;
+}
+
+/* Sidebar Styles (removed, but retained for reference if needed) */
+/*
+.header3 {
+  grid-area: header;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 6px 7px -3px black;
+  font-size: 70%;
+  width: 75%;
+  margin-left: 20.5%;
+}
+
+.menu-icon {
+  display: none;
+}
+
+#sidebar3 {
+  grid-area: sidebar;
+  height: 100vh;
+  background-color: #3574b8;
+  overflow-y: auto;
+  transition: all 0.5s;
+  width: 20%;
+  margin-top: -5%;
+}
+
+.sidebar-title3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px 0px 30px;
+  margin-bottom: 20px;
+}
+
+.sidebar-brand3 {
+  font-weight: bold;
+  font-size: larger;
+  padding-left: 50%;
+  margin-top: 15%;
+}
+
+.sidebar li {
+  padding: 10%;
+  list-style-type: none;
+}
+
+.sidebar-list-item {
+  padding: 10px;
+  font-size: 25px;
+  margin-top: 20%;
+}
+
+.sidebar-list-item:hover {
+  background-color: #33ccff;
+  cursor: pointer;
+  padding: 1.2%;
+  border-radius: 10px;
+}
+
+.sidebar-list-item > a {
+  padding: 20%;
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+.sidebar-responsive {
+  display: inline !important;
+  position: absolute;
+  z-index: 12 !important;
+}
+*/
+
+/* Responsive Design (if needed) */
+@media (max-width: 768px) {
+  .prescription-card {
+      width: 90%;
+      height: auto; /* Adjust height for mobile view */
   }
-  
-  .patient-details {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 15px;
-  }
-  
-  .left-section h3 {
-    color: #008b8b;
-  }
-  
-  .left-section p, .right-section p {
-    margin: 4px 0;
-  }
-  
-  .medicine-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .medicine-table th, .medicine-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  .medicine-table th {
-    background-color: #e6f7ff;
-  }
-  
-  .advice-section {
-    margin-top: 20px;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-  }
-  
-  .footer-section {
-    margin-top: 20px;
-    text-align: right;
-    color: #008b8b;
-  }
-  
-  .footer-section p {
-    margin: 5px 0;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .back-button, .send-button {
-    padding: 10px 15px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .back-button {
-    background-color: #f0ad4e; /* Bootstrap warning color */
-    color: white;
-  }
-  
-  .send-button {
-    background-color: #5cb85c; /* Bootstrap success color */
-    color: white;
-  }
-  
-  .back-button:hover {
-    background-color: #ec971f;
-  }
-  
-  .send-button:hover {
-    background-color: #4cae4c;
-  }
-  
+}
+.action-buttons{
+  margin-left: 20%;
+  gap: 2%;
+}
+
+ .button-wrapper3{
+  margin-right: 10%;
+  margin-top: -3%;
+ }
+.button-wrapper1{
+  margin-right: 83%;
+  margin-top: 3%;
+
+}
+.button-wrapper2{
+  margin-right: 70%;
+  margin-top: -2.5%;
+}

@@ -1,34 +1,33 @@
 .footer {
-    background-color: #f7f9fb;
-    padding: 30px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .footer-content {
-    text-align: left;
-  }
-  
-  .footer-content h4 {
-    font-size: 20px;
-    color: #00a896;
-  }
-  
-  .footer-content p {
-    font-size: 16px;
-  }
-  
-  .contact-info {
-    text-align: right;
-  }
-  
-  .contact-info h4 {
-    font-size: 20px;
-    color: #00a896;
-  }
-  
-  .contact-info p {
-    margin: 5px 0;
-    font-size: 16px;
-  }
-  
+  background-color: #f7f9fb;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-content {
+  text-align: left;
+}
+
+.footer-content h4 {
+  font-size: 20px;
+  color: #00a896;
+}
+
+.footer-content p {
+  font-size: 16px;
+}
+
+.contact-info {
+  text-align: right;
+}
+
+.contact-info h4 {
+  font-size: 20px;
+  color: #00a896;
+}
+
+.contact-info p {
+  margin: 5px 0;
+  font-size: 16px;
+}
