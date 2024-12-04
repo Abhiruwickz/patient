@@ -16,7 +16,7 @@ const Hero = () => {
     <>
       <Navbar />
       <div
-        className="hero-section bg-cover bg-center relative h-[80vh]"
+        className=" bg-cover bg-center relative h-[100vh]"
         style={{
           backgroundImage: `url(${heroBg})`, // Set the background image dynamically
         }}

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import './Dashboard.css';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const Dashboard = () => {
   const location = useLocation();
@@ -11,7 +11,8 @@ const Dashboard = () => {
 
   const [totalAppointments, setTotalAppointments] = useState(0);
   const [appointmentsToday, setAppointmentsToday] = useState(0);
-  const [monthlyData, setMonthlyData] = useState([]); // New state for monthly data
+  const [appointments, setAppointments] = useState([]); // Patient appointments list
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State for the calendar
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -21,92 +22,111 @@ const Dashboard = () => {
         const q = query(collection(db, 'Appointments'), where('doctorId', '==', doctorId));
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+          const today = new Date().toISOString().split('T')[0];
           let total = 0;
           let todayCount = 0;
-          const monthCounts = {}; // To hold counts for each day of the current month
-
-          const currentMonth = new Date().getMonth(); // Get current month (0-11)
-          const currentYear = new Date().getFullYear(); // Get current year
+          const appointmentsList = []; // Track all appointments
 
           querySnapshot.forEach((doc) => {
-            total += 1; // Increment total appointments count
-            const appointmentDate = doc.data().createdAt.toDate(); // Convert Firestore Timestamp to Date object
+            const data = doc.data();
+            const createdAt = data.createdAt;
 
-            // Check if the appointment is from the current month and year
-            if (appointmentDate.getMonth() === currentMonth && appointmentDate.getFullYear() === currentYear) {
-              const dateKey = appointmentDate.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
-              monthCounts[dateKey] = (monthCounts[dateKey] || 0) + 1; // Increment count for the specific date
-
-              // Check if the appointment date matches today's date
-              if (dateKey === today) {
-                todayCount += 1; // Increment today's appointments count
-              }
+            if (!createdAt || typeof createdAt.toDate !== 'function') {
+              console.warn(`Document with ID ${doc.id} is missing a valid 'createdAt' field.`);
+              return;
             }
+
+            total += 1;
+            const appointmentDate = createdAt.toDate().toISOString().split('T')[0];
+
+            if (appointmentDate === today) {
+              todayCount += 1;
+            }
+
+            // Add to appointments list with the visitingTime as timeSlot
+            appointmentsList.push({
+              id: doc.id,
+              patientName: data.patientName || "Unknown", // Handle missing patientName
+              date: createdAt.toDate().toLocaleDateString(),
+              timeSlot: data.visitingTime || "Not Specified", // Use visitingTime for the timeSlot
+            });
           });
 
-          setTotalAppointments(total); // Update total appointments state
-          setAppointmentsToday(todayCount); // Update today's appointments state
-
-          // Prepare monthly data for the chart
-          const monthData = Object.keys(monthCounts).map(date => ({
-            date: date,
-            count: monthCounts[date],
-          }));
-
-          setMonthlyData(monthData); // Set monthly data for the chart
+          setTotalAppointments(total);
+          setAppointmentsToday(todayCount);
+          setAppointments(appointmentsList);
         });
 
-        return () => unsubscribe(); // Cleanup subscription on component unmount
+        return () => unsubscribe();
       } catch (error) {
         console.error('Error fetching appointments data: ', error);
       }
     };
 
-    fetchAppointments(); // Call the fetch function
+    fetchAppointments();
   }, [doctorId]);
 
-  // Prepare data for the chart
-  const chartData = monthlyData.map(item => ({
-    date: item.date, // Keep the full date
-    appointments: item.count,
-  }));
+  // Filter appointments by the selected calendar date
+  const filteredAppointments = appointments.filter((appointment) => {
+    return new Date(appointment.date).toDateString() === selectedDate.toDateString();
+  });
 
   return (
-    <div className="dashboard-container">
-      <div className="main-content">
-        <div className="cards">
-          <div className="card">
-            <h3>Appointments Today</h3>
-            <p>{appointmentsToday}</p>
-            <img src="icon1.png" alt="icon" />
-          </div>
-          <div className="card">
-            <h3>Total Appointments</h3>
-            <p>{totalAppointments}</p>
-            <img src="icon2.png" alt="icon" />
-          </div>
+    <div className="flex flex-col items-center bg-gray-100 min-h-screen p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
+        {/* Appointment Summary Cards */}
+        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+          <h3 className="text-lg font-semibold text-gray-700">Appointments Today</h3>
+          <p className="text-2xl font-bold text-blue-600">{appointmentsToday}</p>
+          <img src="icon1.png" alt="icon" className="w-16 h-16 mt-2" />
+        </div>
+        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+          <h3 className="text-lg font-semibold text-gray-700">Total Appointments</h3>
+          <p className="text-2xl font-bold text-blue-600">{totalAppointments}</p>
+          <img src="icon2.png" alt="icon" className="w-16 h-16 mt-2" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 w-full max-w-5xl">
+        {/* Patient Table */}
+        <div className="bg-white shadow-md rounded-lg p-6 overflow-auto">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Appointments on {selectedDate.toDateString()}</h3>
+          <table className="table-auto w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="p-2 border">Patient Name</th>
+                <th className="p-2 border">Date</th>
+                <th className="p-2 border">Time Slot</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAppointments.length > 0 ? (
+                filteredAppointments.map((appointment) => (
+                  <tr key={appointment.id} className="hover:bg-gray-100">
+                    <td className="p-2 border">{appointment.patientName}</td>
+                    <td className="p-2 border">{appointment.date}</td>
+                    <td className="p-2 border">{appointment.timeSlot}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" className="text-center text-gray-500 p-4">
+                    No appointments for this date.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
-        <div className="dashboard-bottom">
-          <div className="calendar">
-            <div className="calendar-header">
-              <h3>Appointments Overview</h3>
-              <p>Showing appointments for the month</p>
-            </div>
-            <div className="calendar-content">
-            <BarChart width={300} height={300} data={chartData}>
-              <XAxis dataKey="date" tickFormatter={(date) => {
-                const options = { month: 'short', day: 'numeric' }; // Format for the date display
-                return new Date(date).toLocaleDateString(undefined, options); // Format the date to show "MMM DD"
-              }} />
-              <YAxis />
-              <Tooltip />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Bar dataKey="appointments" fill="#8884d8" />
-            </BarChart>
-            </div>
-          </div>
+        {/* Calendar */}
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Calendar</h3>
+          <Calendar
+            className="w-full"
+            value={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+          />
         </div>
       </div>
     </div>
@@ -114,4 +134,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-asds
+

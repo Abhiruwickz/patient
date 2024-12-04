@@ -35,7 +35,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-600 text-white flex items-center justify-between px-3 py-4 shadow-lg">
+    <nav className="absolute top-0 left-0 w-full bg-blue-600 text-white flex items-center justify-between px-3 py-4 shadow-lg ">
       {/* Logo */}
       <div className="flex items-center">
         <img src={logo1} alt="MediConnect" className="h-10 mr-4" />
