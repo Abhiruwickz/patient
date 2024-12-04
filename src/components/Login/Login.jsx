@@ -13,19 +13,18 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+ 
     try {
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
       await signInWithEmailAndPassword(auth, trimmedUsername, trimmedPassword);
-
-      if (trimmedUsername.endsWith('@med.lk')) {
-        const doctorsRef = collection(db, "Doctors");
-        const doctorQuery = query(doctorsRef, where("UserName", "==", trimmedUsername));
+  
+      if (trimmedUsername.endsWith('@med.ac.lk')) {
+        const doctorQuery = query(collection(db, "Doctors"), where("UserName", "==", trimmedUsername));
         const doctorQuerySnapshot = await getDocs(doctorQuery);
-
+  
         if (!doctorQuerySnapshot.empty) {
-          const doctorDoc = doctorQuerySnapshot.docs[0];
-          const doctorId = doctorDoc.id;
+          const doctorId = doctorQuerySnapshot.docs[0].id;
           navigate('/dashboard', { state: { doctorId } });
         } else {
           setErrorMessage("Doctor not found.");
@@ -33,10 +32,9 @@ const Login = () => {
       } else if (trimmedUsername.endsWith('@pharmacy.lk')) {
         navigate('/pharmacy/dashboard');
       } else {
-        const webpatientsRef = collection(db, "webpatients");
-        const patientQuery = query(webpatientsRef, where("email", "==", trimmedUsername));
+        const patientQuery = query(collection(db, "webpatients"), where("email", "==", trimmedUsername));
         const patientQuerySnapshot = await getDocs(patientQuery);
-
+  
         if (!patientQuerySnapshot.empty) {
           navigate('/');
         } else {
@@ -45,9 +43,11 @@ const Login = () => {
       }
     } catch (error) {
       setErrorMessage(`Failed to log in: ${error.message}`);
-      console.error("Error logging in: ", error);
+    } finally {
+    
     }
   };
+  
 
   const handleForgotPassword = async () => {
     if (!username.includes('@')) {
@@ -117,7 +117,7 @@ const Login = () => {
         <div className="text-center mt-4">
           <button
             onClick={handleGoogleSignIn}
-            className="w-full bg-transparent border border-blue-600 text-blue-600 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors"
+            className="w-full  border border-blue-600 hover:bg-blue-700 py-2 rounded-md bg-blue-600 text-white transition-colors"
           >
             Sign in with Google
           </button>
@@ -125,7 +125,7 @@ const Login = () => {
 
         <div className="text-center mt-4 text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-600 hover:underline">
+          <Link to="/signup" className="text-blue-800">
             Sign up
           </Link>
         </div>

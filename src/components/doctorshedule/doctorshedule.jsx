@@ -115,7 +115,7 @@ const DoctorSchedule = () => {
         </div>
       </div>
       {/* Schedule Table */}
-      <div className="mt-8 px-4 w-full max-w-5xl mx-auto">
+      <div className="mt-8 px-4 w-full max-w-5xl mx-auto mb-10">
         <table className="w-full bg-white shadow-md rounded-lg">
           <thead>
             <tr className="bg-gray-200 text-gray-600 text-sm">

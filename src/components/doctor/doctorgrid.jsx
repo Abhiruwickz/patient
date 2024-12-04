@@ -123,14 +123,14 @@ const DoctorGrid = () => {
           ) : (
             <div>
               {filteredDoctors.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 bg-cover gap-6 mt-8 ">
                   {filteredDoctors.map((doctor) => (
                     <div
                       key={doctor.id}
-                      className="bg-white rounded-lg shadow-lg hover:shadow-xl cursor-pointer p-4"
+                      className="bg-white rounded-lg shadow-lg hover:shadow-xl cursor-pointer p-4 "
                       onClick={() => handleDoctorClick(doctor.id)}
                     >
-                      <div className="w-full h-48 relative">
+                      <div className="w-full h-60 relative">
                         <img
                           src={doctor.imageUrl || '/placeholder-image.png'}
                           alt={doctor.name}

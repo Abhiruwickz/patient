@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import CryptoJS from 'crypto-js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import './psummary.css';
 
 const PSummary = () => {
   const location = useLocation();
   const { prescriptionId } = location.state || {};
+  const navigate = useNavigate(); // For navigation after action completion
 
   const [prescription, setPrescription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [completionStatus, setCompletionStatus] = useState(null); // State to track the completion status
-  const prescriptionRef = useRef(); // Ref to capture the prescription summary
+  const [completionStatus, setCompletionStatus] = useState(null);
+  const prescriptionRef = useRef();
 
   useEffect(() => {
     if (!prescriptionId) {
@@ -67,142 +67,138 @@ const PSummary = () => {
     fetchPrescription();
   }, [prescriptionId]);
 
-  // Function to handle Complete button click
   const handleComplete = async () => {
     try {
       const confirmPrescriptionRef = doc(db, 'ConfirmPrescription', prescriptionId);
       await setDoc(confirmPrescriptionRef, { Action: 'Completed' });
-
-      setCompletionStatus('Completed'); // Update the status state to "Completed"
-      console.log('Prescription marked as complete');
+      setCompletionStatus('Completed');
+      console.log('Prescription marked as Completed');
+      navigate('/pharmacy-prescription'); // Navigate to the pharmacy-prescription page
     } catch (error) {
       console.error('Error marking prescription as complete:', error);
     }
   };
 
-  // Function to handle Prescription Issued button click
   const handlePrescriptionIssued = async () => {
     try {
       const confirmPrescriptionRef = doc(db, 'ConfirmPrescription', prescriptionId);
       await setDoc(confirmPrescriptionRef, { Action: 'Prescription Issued' });
-
-      setCompletionStatus('Prescription Issued'); // Update the status state to "Prescription Issued"
-      console.log('Prescription has been issued');
+      setCompletionStatus('Prescription Issued');
+      console.log('Prescription Issued');
+      navigate('/pharmacy-prescription'); // Navigate to the pharmacy-prescription page
     } catch (error) {
       console.error('Error issuing prescription:', error);
     }
   };
 
-  // Function to handle PDF generation
   const handleGeneratePDF = () => {
-    html2canvas(prescriptionRef.current).then(canvas => {
+    html2canvas(prescriptionRef.current).then((canvas) => {
       const pdf = new jsPDF();
       const imgData = canvas.toDataURL('image/png');
-      const imgWidth = 180; // Width of PDF
-      const pageHeight = pdf.internal.pageSize.height;
+      const imgWidth = 180;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const heightLeft = imgHeight;
 
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      position += heightLeft;
-
-      pdf.save('prescription.pdf'); // Save the generated PDF
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+      pdf.save('prescription.pdf');
     });
   };
 
   return (
-    <div>
-      <div className="prescription-container" ref={prescriptionRef}> {/* Add ref to the container */}
-        <div className="pretitle">
-          <h2>Prescription</h2>
+    <div className="p-6">
+      <div ref={prescriptionRef} className="max-w-4xl mx-auto bg-blue-100 p-6 rounded-lg shadow-md mt-10">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold text-blue-700">Prescription</h2>
         </div>
-        <div className="prescription-card">
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p>{error}</p>
-          ) : prescription ? (
-            <>
-              <header className="headerpre">
-                <div className="doctor-info">
-                  <h2>{prescription.doctor.doctorName}</h2>
-                  
-                  <p>Mob. No: {prescription.doctor.phoneNumber}</p>
-                </div>
-                <div className="clinic-logo">
-                  <span>MediConnect</span>
-                </div>
-              </header>
-
-              <div className="patient-info">
-                <div className="patient-details">
-                  <p>
-                    <strong>ID: {prescription.nicNo}</strong> - {prescription.patient}
-                  </p>
-                  <p>Address: Kandy</p>
-                  <p>Temp (deg): 36, BP: 120/80 mmHg</p>
-                </div>
-                <div className="prescription-meta">
-                  <p>Patient Name: {prescription.patient}</p>
-                  <p>Reference No: {prescriptionId}</p>
-                  <p>Date: {prescription.prescriptionDate}</p>
-                </div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : prescription ? (
+          <>
+            <header className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-lg font-bold">{prescription.doctor.doctorName}</h2>
+                <p>Mob. No: {prescription.doctor.phoneNumber}</p>
               </div>
+              <div className="text-right">
+                <span className="text-teal-600 font-semibold">MediConnect</span>
+              </div>
+            </header>
 
-              <h4>Medicines Prescribed:</h4>
-              <table className="medicine-table">
-                <thead>
-                  <tr>
-                    <th>Medicine Name</th>
-                    <th>Dosage</th>
-                    <th>Duration</th>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <p>
+                  <strong>ID:</strong> {prescription.nicNo} - {prescription.patient}
+                </p>
+                <p>
+                  <strong>Address:</strong> Kandy
+                </p>
+                <p>
+                  <strong>Temp:</strong> 36°C, <strong>BP:</strong> 120/80 mmHg
+                </p>
+              </div>
+              <div>
+                <p>
+                  <strong>Patient Name:</strong> {prescription.patient}
+                </p>
+                <p>
+                  <strong>Reference No:</strong> {prescriptionId}
+                </p>
+                <p>
+                  <strong>Date:</strong> {prescription.prescriptionDate}
+                </p>
+              </div>
+            </div>
+
+            <h4 className="text-lg font-bold mb-4">Medicines Prescribed:</h4>
+            <table className="table-auto w-full mb-6 text-sm">
+              <thead>
+                <tr className="bg-blue-200">
+                  <th className="px-4 py-2">Medicine Name</th>
+                  <th className="px-4 py-2">Dosage</th>
+                  <th className="px-4 py-2">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {prescription.medicines.map((med, index) => (
+                  <tr key={index} className="odd:bg-blue-50 even:bg-blue-100">
+                    <td className="px-4 py-2">{med.medicineName}</td>
+                    <td className="px-4 py-2">{med.instruction}</td>
+                    <td className="px-4 py-2">{med.days} days</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {prescription.medicines.map((med, index) => (
-                    <tr key={index}>
-                      <td>{med.medicineName}</td>
-                      <td>{med.instruction}</td>
-                      <td>{med.days} days</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                ))}
+              </tbody>
+            </table>
 
-              
-                
-              
-
-              <footer className="footer">
-                <p>{prescription.doctor.doctorName}</p>
-                <p>M.B.B.S., M.D., M.S.</p>
-              </footer>
-            </>
-          ) : (
-            <p>No prescriptions available for this patient.</p>
-          )}
-        </div>
+            <footer className="text-right text-sm">
+              <p className="font-bold">{prescription.doctor.doctorName}</p>
+              <p>M.B.B.S., M.D., M.S.</p>
+            </footer>
+          </>
+        ) : (
+          <p>No prescriptions available for this patient.</p>
+        )}
       </div>
 
-      {/* Conditionally render buttons and status */}
-      <div className="action-buttons">
-        {completionStatus ? (
-          <p>{completionStatus}</p> // Display the status once one of the buttons is clicked
-        ) : (
-          <>
-            <div className="button-wrapper1">
-              <button onClick={handleComplete}>Complete</button>
-            </div>
-            <div className="button-wrapper2">
-              <button onClick={handlePrescriptionIssued}>Prescription Issued</button>
-            </div>
-          </>
-        )}
-        <div className="button-wrapper3">
-          <button onClick={handleGeneratePDF}>Download Prescription</button>
-        </div>
+      <div className="flex justify-center gap-4 mt-10">
+        <button
+          onClick={handleComplete}
+          className="w-40 py-2 bg-blue-600 text-white rounded shadow-md hover:bg-blue-700"
+        >
+          Mark as Completed
+        </button>
+        <button
+          onClick={handlePrescriptionIssued}
+          className="w-40 py-2 bg-green-600 text-white rounded shadow-md hover:bg-green-700"
+        >
+          Issue Prescription
+        </button>
+        <button
+          onClick={handleGeneratePDF}
+          className="w-32 py-2 bg-gray-600 text-white rounded shadow-md hover:bg-gray-700"
+        >
+          Download PDF
+        </button>
       </div>
     </div>
   );

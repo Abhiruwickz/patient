@@ -30,7 +30,7 @@ function Home() {
         const doctorId = doctorDoc.id;
 
         // Successful login, navigate to the dashboard with doctorId
-        navigate('/doctor-schedule', { state: { doctorId } });
+        navigate('/Appoinment', { state: { doctorId } });
       }
     } catch (err) {
       setError('Failed to log in. Please try again.');

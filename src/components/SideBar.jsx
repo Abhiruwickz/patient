@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom'; // Added 'Link' here
+import { useLocation, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { FaUserMd, FaCalendarAlt, FaFileAlt, FaPills, FaCalendarCheck } from 'react-icons/fa';
@@ -59,64 +59,52 @@ const SideBar = () => {
   };
 
   return (
-    <div className="sidebar">
-      <div className="logo-container">
-        <div className="sidebar-profile">
-          <img
-            src={doctorData?.photo || './assets/placeholder-profile-pic.svg'}
-            alt="Doctor Profile"
-            className="sidebar-profile-pic"
-          />
-          <div className="sidebar-profile-info">
-            <h2>{doctorData?.doctorName || 'Dr. Unknown'}</h2>
-            <p>{doctorData?.biography || 'MBBS, MD'}</p>
+    <div className="flex min-h-screen">
+      <div className="sidebar bg-indigo-700 text-white w-60 flex flex-col py-0">
+        <div className="logo-container flex justify-center items-center mt-2 mb-2">
+          <div className="sidebar-profile flex flex-col items-center text-center">
+            <img
+              src={doctorData?.photo || './assets/placeholder-profile-pic.svg'}
+              alt="Doctor Profile"
+              className="sidebar-profile-pic w-40 h- rounded-full mb-2"
+            />
+            <div className="sidebar-profile-info text-white">
+              <h2 className="text-lg">{doctorData?.doctorName || 'Dr. Unknown'}</h2>
+              <p className="text-sm">{doctorData?.biography || 'MBBS, MD'}</p>
+            </div>
           </div>
         </div>
-      </div>
-      <ul>
-        <li>
-          <div
-            onClick={handleNavigateToDashboard}
-            className={location.pathname === '/dashboard' ? 'active' : ''}
-            style={{ cursor: 'pointer' }}
-          >
-            <FaUserMd className="icon" /> Dashboard
-          </div>
-        </li>
-        <li>
-          <div
-            onClick={handleNavigateToDoctorSchedule}
-            className={location.pathname === '/doctor-schedule' ? 'active' : ''}
-            style={{ cursor: 'pointer' }}
-          >
-            <FaCalendarAlt className="icon" /> Doctor Schedule
-          </div>
-        </li>
-        {/* <div
-            onClick={handleNavigateToAddPrescription}
-            className={location.pathname === '/prescription' ? 'active' : ''}
-            style={{ cursor: 'pointer' }}
-          >
-            <FaFileAlt className="icon" /> Prescription
-          </div> */}
+        <ul className="flex flex-col p-0 m-0 w-full">
+  <li>
+    <div
+      onClick={handleNavigateToDashboard}
+      className={`p-3 flex items-center cursor-pointer ${location.pathname === '/dashboard' ? 'bg-indigo-600' : ''}`}
+    >
+      <FaUserMd className="icon mr-2 text-lg" /> Dashboard
+    </div>
+  </li>
+  <li>
+    <div
+      onClick={handleNavigateToDoctorSchedule}
+      className={`p-3 flex items-center cursor-pointer ${location.pathname === '/doctor-schedule' ? 'bg-indigo-600' : ''}`}
+    >
+      <FaCalendarAlt className="icon mr-2 text-lg" /> Doctor Schedule
+    </div>
+  </li>
+  <li>
+    <div
+      onClick={handleNavigateToAppointment}
+      className={`p-3 flex items-center cursor-pointer ${location.pathname === '/Appointment' ? 'bg-indigo-600' : ''}`}
+    >
+      <FaPills className="icon mr-2 text-lg" /> Appointment
+    </div>
+  </li>
+</ul>
 
-        <li>
-          <div
-            onClick={handleNavigateToAppointment}
-            className={location.pathname === '/Appointment' ? 'active' : ''}
-            style={{ cursor: 'pointer' }}
-          >
-            <FaPills className="icon" /> Appointment
-          </div>
-        </li>
-        {/* <li>
-          <Link to="/MedicalHistory" className={location.pathname === '/MedicalHistory' ? 'active' : ''}>
-            <FaCalendarCheck className="icon" /> Medical History
-          </Link>
-        </li> */}
-      </ul>
-      {loading && <p>Loading...</p>}
-      {error && <p className="error">{error}</p>}
+        {loading && <p className="text-center text-white">Loading...</p>}
+        {error && <p className="error text-center text-red-600 bg-red-200 p-2">{error}</p>}
+      </div>
+      {/* The rest of the content here */}
     </div>
   );
 };

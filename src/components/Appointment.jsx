@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebaseConfig'
-import './Appointment.css';
+import { db } from '../firebaseConfig';
 
 const Appointment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const doctorId = location.state?.doctorId || localStorage.getItem('doctorId'); // Retrieve from localStorage if not in state
-  
+  const doctorId = location.state?.doctorId || localStorage.getItem('doctorId');
+
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,29 +57,25 @@ const Appointment = () => {
       console.error('NIC number is not available for this appointment.');
     }
   };
-  
-  
 
   const handleSendPrescription = (appointment) => {
-    // Send full patient details when navigating to prescription page
-    navigate(`/prescription`, { 
-      state: { 
-        appointmentId: appointment.id, 
-        patientName: appointment.patientName, 
+    navigate(`/prescription`, {
+      state: {
+        appointmentId: appointment.id,
+        patientName: appointment.patientName,
         appointmentNo: appointment.appointmentNumber,
-        nicNo: appointment.nic // Pass NIC number to the prescription page
-      }
+        nicNo: appointment.nic,
+      },
     });
   };
 
   return (
-    <div className="appointment">
-      <main className="appointment-main">
-        <div className="appointment-content">
-          
-          <div className="appointment-summary">
-            <h3>Select Patient</h3>
-            <select className="appointment-select">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5">
+      <main className="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl">
+        <div className="flex flex-col gap-6">
+          <div className="bg-blue-100 rounded-lg p-6 flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-blue-700">Select Patient</h3>
+            <select className="border border-gray-300 rounded px-4 py-2">
               <option value="">Select</option>
               {appointments.map((appointment) => (
                 <option key={appointment.id} value={appointment.id}>
@@ -88,52 +83,59 @@ const Appointment = () => {
                 </option>
               ))}
             </select>
-            <div className="appointment-count">
-              <div className="count-box">
-                <p>Appointment Count</p>
-                <span>{appointments.length}</span>
-              </div>
+            <div className="bg-blue-100 rounded-lg text-center p-4">
+              <p className="text-sm text-blue-700">Appointment Count</p>
+              <span className="text-2xl font-bold text-blue-700">
+                {appointments.length}
+              </span>
             </div>
           </div>
 
-          <table className="appointment-table">
+          <table className="w-full border-collapse border border-gray-200">
             <thead>
-              <tr>
-                <th>Appointment No</th>
-                <th>Patient Name</th>
-                <th>NIC</th>
-                <th>Phone Number</th>
-                <th>Medical History</th>
-                <th>Prescription</th>
+              <tr className="bg-blue-100 text-left">
+                <th className="border border-gray-200 px-4 py-2">Appointment No</th>
+                <th className="border border-gray-200 px-4 py-2">Patient Name</th>
+                <th className="border border-gray-200 px-4 py-2">NIC</th>
+                <th className="border border-gray-200 px-4 py-2">Phone Number</th>
+                <th className="border border-gray-200 px-4 py-2">Medical History</th>
+                <th className="border border-gray-200 px-4 py-2">Prescription</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6">Loading...</td>
+                  <td colSpan="6" className="text-center py-4">Loading...</td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="6" className="error">
-                    {error}
-                  </td>
+                  <td colSpan="6" className="text-center py-4 text-red-500">{error}</td>
                 </tr>
               ) : appointments.length > 0 ? (
                 appointments.map((appointment) => (
-                  <tr key={appointment.id}>
-                    <td>{appointment.appointmentNumber}</td>
-                    <td onClick={() => handlePatientClick(appointment.id)} className="patient-name">
+                  <tr key={appointment.id} className="hover:bg-gray-100">
+                    <td className="border border-gray-200 px-4 py-2">{appointment.appointmentNumber}</td>
+                    <td
+                      className="border border-gray-200 px-4 py-2 text-blue-700 cursor-pointer hover:underline"
+                      onClick={() => handlePatientClick(appointment.id)}
+                    >
                       {appointment.patientName}
                     </td>
-                    <td>{appointment.nic}</td>
-                    <td>{appointment.phone}</td>
-                    <td>
-                      <button className="view-btn" onClick={() => handleViewMedicalHistory(appointment)}>
+                    <td className="border border-gray-200 px-4 py-2">{appointment.nic}</td>
+                    <td className="border border-gray-200 px-4 py-2">{appointment.phone}</td>
+                    <td className="border border-gray-200 px-4 py-2">
+                      <button
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        onClick={() => handleViewMedicalHistory(appointment)}
+                      >
                         View
                       </button>
                     </td>
-                    <td>
-                      <button className="send-prescription-btn" onClick={() => handleSendPrescription(appointment)}>
+                    <td className="border border-gray-200 px-4 py-2">
+                      <button
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        onClick={() => handleSendPrescription(appointment)}
+                      >
                         Send Prescription
                       </button>
                     </td>
@@ -141,14 +143,17 @@ const Appointment = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6">No appointments available.</td>
+                  <td colSpan="6" className="text-center py-4">No appointments available.</td>
                 </tr>
               )}
             </tbody>
           </table>
 
-          <div className="action-buttons">
-            <button className="back-btn" onClick={() => window.history.back()}>
+          <div className="text-right">
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              onClick={() => window.history.back()}
+            >
               Back
             </button>
           </div>

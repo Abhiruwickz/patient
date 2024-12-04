@@ -31,14 +31,36 @@ const SignUp = () => {
     setPhoto(e.target.files[0]);
   };
 
+  const validateNIC = (nic) => {
+    const nicRegex = /^\d{9}[Vv]$|^[A-Za-z]{1}\d{9}[Vv]$/;
+    return nicRegex.test(nic);
+  };
+
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^07\d{8}$/;
+    return phoneRegex.test(phone);
+  };
+
   const handleSignup = async () => {
     const { email, password, confirmPassword, nic, title, firstName, lastName, contactNo } = formData;
-  
+
+    // Validate NIC
+    if (!validateNIC(nic)) {
+      alert("Invalid NIC format. It should be in the format: X123456789V or 123456789V");
+      return;
+    }
+
+    // Validate Phone Number
+    if (!validatePhoneNumber(contactNo)) {
+      alert("Invalid phone number format. It should start with '07' and followed by 8 digits.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-  
+
     try {
       // Create user with Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
