@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { collection, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import './DoctorSchedule1.css';
 
 const DoctorSchedule1 = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate hook
   const { doctorId } = location.state || {}; // Get doctorId from the state
 
   const [schedule, setSchedule] = useState([]);
-  const [appointments, setAppointments] = useState([]); // State to hold appointments data
-  const [showModal, setShowModal] = useState(false); // State to toggle modal visibility
-  const [appointmentCount, setAppointmentCount] = useState(0); // State to store appointment count
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -38,29 +36,11 @@ const DoctorSchedule1 = () => {
     fetchSchedule();
   }, [doctorId]);
 
-  const handleViewAppointments = async (appointmentDate) => {
+  const handleViewAppointments = (appointmentDate) => {
     if (!doctorId || !appointmentDate) return; // Check for valid inputs
 
-    try {
-      const q = query(
-        collection(db, 'Appointments'),
-        where('doctorId', '==', doctorId),
-        where('appointmentDate', '==', appointmentDate)
-      );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const appointmentData = [];
-        querySnapshot.forEach((doc) => {
-          appointmentData.push({ id: doc.id, ...doc.data() }); // Add document data to the appointment array
-        });
-        setAppointments(appointmentData); // Update the appointments state
-        setAppointmentCount(appointmentData.length); // Update the appointment count
-        setShowModal(true); // Show the modal
-      });
-
-      return () => unsubscribe(); // Cleanup listener
-    } catch (error) {
-      console.error('Error fetching appointments data: ', error);
-    }
+    // Navigate to the /newfilteredAppointment page and pass appointmentDate and doctorId as state
+    navigate('/newfilteredAppointment', { state: { appointmentDate, doctorId } });
   };
 
   return (
@@ -99,48 +79,6 @@ const DoctorSchedule1 = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Modal for displaying appointments */}
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h3>Appointments</h3>
-              <p>Total Appointments: {appointmentCount}</p>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Appointment No</th>
-                    <th>Patient Name</th>
-                    <th>NIC</th>
-                    <th>Contact</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.length > 0 ? (
-                    appointments.map((appointment) => (
-                      <tr key={appointment.id}>
-                        <td>{appointment.appointmentNumber}</td>
-                        <td>{appointment.patientName}</td>
-                        <td>{appointment.nic}</td>
-                        <td>{appointment.phone}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="4">No appointments available.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              <button
-                className="close-modal-btn"
-                onClick={() => setShowModal(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
 
         <button className="back-button" onClick={() => window.history.back()}>Back</button>
       </div>

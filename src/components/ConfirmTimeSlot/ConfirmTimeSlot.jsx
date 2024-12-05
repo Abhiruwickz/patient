@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   collection,
   setDoc,
@@ -10,10 +10,14 @@ import {
   where,
   serverTimestamp,
   doc,
-} from "firebase/firestore";
+  getCountFromServer,
+} from "firebase/firestore"; 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../../firebaseConfig";
+import './ConfirmTimeSlot.css';
 import Header from "../header1/header1";
+import { getDoc } from "firebase/firestore";
+import Navbar from '../home/navbar/navbar';
 
 const ConfirmSlot = () => {
   const [formData, setFormData] = useState({
@@ -38,6 +42,7 @@ const ConfirmSlot = () => {
   const [doctorId, setDoctorId] = useState("");
   const [scheduleId, setScheduleId] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [doctorName, setDoctorName] = useState("Doctor Name");
   const [specialization, setSpecialization] = useState("Specialization");
@@ -46,12 +51,12 @@ const ConfirmSlot = () => {
 
   const generateAppointmentNumber = async (doctorId, scheduleId) => {
     try {
-      const appointmentsRef = collection(db, "Appointments");
-      const q = query(appointmentsRef, where("scheduleId", "==", scheduleId));
+      const appointmentsRef = collection(db, 'Appointments');
+      const q = query(appointmentsRef, where('scheduleId', '==', scheduleId));
       const querySnapshot = await getDocs(q);
 
       const existingNumbers = querySnapshot.docs.map((doc) => {
-        const idParts = doc.data().appointmentNumber.split("-");
+        const idParts = doc.data().appointmentNumber.split('-');
         const numPart = idParts[idParts.length - 1];
         return parseInt(numPart, 10);
       });
@@ -61,10 +66,10 @@ const ConfirmSlot = () => {
         newNumber++;
       }
 
-      const appointmentNumber = `${doctorId}-${scheduleId}-${String(newNumber).padStart(3, "0")}`;
+      const appointmentNumber = `${doctorId}-${scheduleId}-${String(newNumber).padStart(3, '0')}`;
       return appointmentNumber;
     } catch (error) {
-      console.error("Error generating appointment number: ", error);
+      console.error('Error generating appointment number: ', error);
       return null;
     }
   };
@@ -115,15 +120,11 @@ const ConfirmSlot = () => {
 
     fetchLatestBooking();
 
-    const handleTimeout = () => {
-      navigate("/doctors");
-    };
-
     timerRef.current = setInterval(() => {
       setTimeRemaining((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timerRef.current);
-          handleTimeout(); // calling handleTimeout here to navigate after time expires
+          navigate("/doctors");
           return 0;
         }
         return prevTime - 1;
@@ -131,7 +132,7 @@ const ConfirmSlot = () => {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [navigate]); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -149,19 +150,99 @@ const ConfirmSlot = () => {
     }
   };
 
+
+     // Function to generate the reference number based on existing patients
+     const generateReferenceNo = async () => {
+      try {
+        // Get the count of all documents in the "Patients" collection
+        const patientsCollection = collection(db, 'Patients');
+        const snapshot = await getCountFromServer(patientsCollection);
+    
+        const totalPatients = snapshot.data().count; // Total existing patients
+        const referenceNo = `REF-2024-${totalPatients + 1}`; // Generate new reference number
+    
+        return referenceNo;
+      } catch (error) {
+        console.error('Error generating reference number:', error);
+        return '';
+      }
+    };
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Generate appointment number
       const appointmentNumber = await generateAppointmentNumber(doctorId, scheduleId);
       if (!appointmentNumber) {
         throw new Error("Failed to generate appointment number.");
       }
-
+  
+      // Generate reference number for the patient
+      const refNo = await generateReferenceNo();
+  
       let photoUrl = formData.photo;
-
-      // Save the appointment
+  
+      // Retrieve the relevant schedule
+      const scheduleDocRef = doc(db, "schedule", doctorId, "schedules", scheduleId);
+      const scheduleDoc = await getDoc(scheduleDocRef);
+  
+      if (!scheduleDoc.exists()) {
+        alert("Schedule not found. Please try again.");
+        return;
+      }
+  
+      const scheduleData = scheduleDoc.data();
+  
+      // Check if the schedule is almost fully booked
+      const [startHour, startMinutes, startPeriod] = parseTime(scheduleData.startTime);
+      const [endHour, endMinutes, endPeriod] = parseTime(scheduleData.endTime);
+  
+      if (
+        convertTo24HourFormat(startHour, startMinutes, startPeriod) >=
+        convertTo24HourFormat(endHour, endMinutes, endPeriod)
+      ) {
+        alert("Sorry, cannot complete your appointment because this schedule is almost fully booked.");
+        return;
+      }
+  
+      // Increment startTime by 6 minutes
+      const updatedStartTime = addMinutesToTime(startHour, startMinutes, startPeriod, 6);
+  
+      // Update the schedule's startTime
+      await setDoc(
+        scheduleDocRef,
+        { startTime: updatedStartTime },
+        { merge: true }
+      );
+  
+      // Save the patient details
+      const patientData = {
+        referenceNo: refNo,
+        name: formData.patientName,
+        phone: formData.phone,
+        gender: formData.gender,
+        nic: formData.nic,
+        email: formData.email,
+        bloodGroup: formData.bloodGroup,
+        address: formData.address,
+        dob: formData.dob,
+        allergies: formData.allergies || "Appointed Patient", // Add default value if allergies is not provided
+      };
+  
+      await setDoc(doc(db, "Patients", refNo), patientData);
+  
+      // Save the appointment details
       await setDoc(doc(db, "Appointments", appointmentNumber), {
-        ...formData,
+        patientName: formData.patientName,
+        email: formData.email,
+        phone: formData.phone,
+        bloodGroup: formData.bloodGroup,
+        gender: formData.gender,
+        nic: formData.nic,
+        address: formData.address,
+        dob: formData.dob,
+        allergies: formData.allergies,
         doctorId,
         doctorName,
         appointmentNumber,
@@ -172,221 +253,301 @@ const ConfirmSlot = () => {
         doctorPhotoUrl,
         specialization,
         scheduleId,
+        appointmentTime: updatedStartTime,
       });
-
-      console.log("Appointment successfully saved");
+  
+      console.log("Appointment and patient successfully saved");
+  
+      // Clear form data
+      setFormData({
+        patientName: "",
+        email: "",
+        phone: "",
+        bloodGroup: "",
+        gender: "",
+        nic: "",
+        address: "",
+        dob: "",
+        allergies: "",
+        photo: "",
+      });
+  
       clearInterval(timerRef.current);
       navigate("/confirm");
     } catch (error) {
-      console.error("Error saving appointment:", error);
+      console.error("Error saving appointment or patient:", error);
       alert("An error occurred while saving the appointment. Please try again.");
     }
   };
+  
+
+    // Helper functions
+    const parseTime = (timeString) => {
+      const [time, period] = timeString.split(' ');
+      const [hours, minutes] = time.split(':').map(Number);
+      return [hours, minutes, period];
+    };
+    
+    const convertTo24HourFormat = (hours, minutes, period) => {
+      if (period === 'PM' && hours < 12) hours += 12;
+      if (period === 'AM' && hours === 12) hours = 0;
+      return hours * 60 + minutes;
+    };
+    
+    const addMinutesToTime = (hours, minutes, period, increment) => {
+      let totalMinutes = convertTo24HourFormat(hours, minutes, period) + increment;
+    
+      // Adjust for 24-hour clock
+      if (totalMinutes >= 1440) totalMinutes -= 1440;
+    
+      const updatedHours = Math.floor(totalMinutes / 60) % 24;
+      const updatedMinutes = totalMinutes % 60;
+      const updatedPeriod = updatedHours >= 12 ? 'PM' : 'AM';
+    
+      const finalHours = updatedHours % 12 || 12;
+      return `${String(finalHours).padStart(2, '0')}:${String(updatedMinutes).padStart(2, '0')} ${updatedPeriod}`;
+    };
+  
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
-      <Header />
-      <h1 className="text-3xl font-semibold mb-6 mt-3 ">Confirm Time Slot</h1>
-
-      <div className="flex mb-6 bg-white rounded-lg p-4 shadow-md">
-  <img src={doctorPhotoUrl} alt="Doctor Profile" className="w-32 h-32 mr-4" />
-  <div className="flex flex-col ml-10 ">
-    <h2 className="text-xl font-semibold">{doctorName}</h2>
-    <p className="text-blue-500">{specialization}</p>
-    {/* <p className="text-sm text-gray-400">{appointmentDetails.visitingTime}</p> */}
-  </div>
-  {/* Right Side Section */}
-  <div className="border-2 border-blue-800 bg-white rounded-lg w-1/3 p-4 shadow-md flex flex-col justify-center items-start ml-32">
-    <p className="text-sm text-slate-700 font-semibold mb-2">{appointmentDetails.visitingTime}</p>
-    <p className="text-sm text-red-300 font-bold">
-      Complete within {Math.floor(timeRemaining / 60)} minutes your appointment.
+    <div className=" flex flex-col items-center bg-slate-200 min-h-screen p-6">
+    <Navbar />
+    <h1 className="text-3xl font-extrabold text-blue-700 mb-8">Confirm Time Slot</h1>
+  
+    <div className=" flex flex-col md:flex-row items-center bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl mb-10">
+      <img
+        src={doctorPhotoUrl}
+        alt="Doctor Profile"
+        className="w-28 h-28 rounded-full object-cover"
+      />
+      <div className="flex flex-col items-start w-full md:w-1/2 mt-6 md:mt-0 ml-6">
+        <h2 className="text-xl font-semibold text-gray-700 ">{doctorName}</h2>
+        <p className="text-gray-500">{specialization}</p>
+        <p className="text-gray-500">
+          <strong>Doctor ID:</strong> {doctorId}
+        </p>
+      </div>
+     
+     <div className="flex flex-col items-end w-full md:w-1/2 mt-6 md:mt-0 md:pl-4 ">
+    <p className="text-lg font-medium text-blue-600">
+      {appointmentDetails.visitingTime || "Loading time..."}
     </p>
-  </div>
+    <p>{appointmentDetails.appointmentDate || "Loading date..."}</p>
+    <div className="time-warning text-red-600 font-semibold mt-4">
+      Complete within{" "}
+      <span className="text-lg">{formatTimeRemaining(timeRemaining)}</span>
+    </div>
+
 </div>
 
-<form onSubmit={handleSubmit} className="space-y-6">
-  <div className="grid grid-cols-2 gap-4">
-    <div>
-      <label htmlFor="patientName" className="block text-sm font-medium text-gray-700">
-        Patient Name
-      </label>
-      <input
-        id="patientName"
-        type="text"
-        name="patientName"
-        placeholder="Enter full name"
-        value={formData.patientName}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      />
     </div>
-    <div>
-      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-        Email
-      </label>
-      <input
-        id="email"
-        type="email"
-        name="email"
-        placeholder="example@example.com"
-        value={formData.email}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      />
-    </div>
-  </div>
-
-  <div className="grid grid-cols-2 gap-4">
-    <div>
-      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-        Phone
-      </label>
-      <input
-        id="phone"
-        type="text"
-        name="phone"
-        placeholder="Enter phone number"
-        value={formData.phone}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      />
-    </div>
-    <div>
-      <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700">
-        Blood Group
-      </label>
-      <input
-        id="bloodGroup"
-        type="text"
-        name="bloodGroup"
-        placeholder="e.g., O+"
-        value={formData.bloodGroup}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      />
-    </div>
-  </div>
-
-  <div className="grid grid-cols-2 gap-4">
-    <div>
-      <label htmlFor="nic" className="block text-sm font-medium text-gray-700">
-        NIC
-      </label>
-      <input
-        id="nic"
-        type="text"
-        name="nic"
-        placeholder="Enter NIC"
-        value={formData.nic}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      />
-    </div>
-    <div>
-      <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
-        Gender
-      </label>
-      <select
-        id="gender"
-        name="gender"
-        value={formData.gender}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      >
-        <option value="" disabled>
-          Select Gender
-        </option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
-    <div>
-      <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
-        Date of Birth
-      </label>
-      <input
-        id="dob"
-        type="date"
-        name="dob"
-        value={formData.dob}
-        onChange={handleChange}
-        className="p-2 border rounded-md w-full"
-        required
-      />
-    </div>
-    <div>
-      <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
-        Upload Photo
-      </label>
-      <input
-        id="photo"
-        type="file"
-        onChange={handlePhotoUpload}
-        className="p-2 border rounded-md w-full"
-      />
-    </div>
-  </div>
-
-  <div>
-    <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-      Address
-    </label>
-    <textarea
-      id="address"
-      name="address"
-      placeholder="Enter your address"
-      value={formData.address}
-      onChange={handleChange}
-      className="p-2 border rounded-md w-full"
-      rows="2"
-      required
-    />
-  </div>
-
-  <div>
-    <label htmlFor="allergies" className="block text-sm font-medium text-gray-700">
-      Allergies (if any)
-    </label>
-    <textarea
-      id="allergies"
-      name="allergies"
-      placeholder="List any allergies"
-      value={formData.allergies}
-      onChange={handleChange}
-      className="p-2 border rounded-md w-full"
-      rows="4"
-    />
-  </div>
-
-        <div className="flex justify-between mb-4">
-          <div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white py-2 px-6 rounded-md"
-            >
-              Go back
-            </button>
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white py-2 px-6 rounded-md"
-            >
-              Confirm Appointment
-            </button>
-          </div>
+  
+    <form
+      className="patient-form bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl space-y-6"
+      onSubmit={handleSubmit}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="patientName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Patient Name
+          </label>
+          <input
+            id="patientName"
+            type="text"
+            name="patientName"
+            placeholder="Enter patient name"
+            value={formData.patientName}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
         </div>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            value={formData.email}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Phone
+          </label>
+          <input
+            id="phone"
+            type="text"
+            name="phone"
+            placeholder="Enter phone number"
+            value={formData.phone}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="bloodGroup"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Blood Group
+          </label>
+          <input
+            id="bloodGroup"
+            type="text"
+            name="bloodGroup"
+            placeholder="Enter blood group"
+            value={formData.bloodGroup}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="nic"
+            className="block text-sm font-medium text-gray-700"
+          >
+            NIC
+          </label>
+          <input
+            id="nic"
+            type="text"
+            name="nic"
+            placeholder="Enter NIC"
+            value={formData.nic}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="address"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Address
+          </label>
+          <input
+            id="address"
+            type="text"
+            name="address"
+            placeholder="Enter address"
+            value={formData.address}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="dob"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Date of Birth
+          </label>
+          <input
+            id="dob"
+            type="date"
+            name="dob"
+            value={formData.dob}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="gender"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Gender
+          </label>
+          <select
+            id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label
+          htmlFor="allergies"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Allergies (if any)
+        </label>
+        <textarea
+          id="allergies"
+          name="allergies"
+          placeholder="List any allergies"
+          value={formData.allergies}
+          onChange={handleChange}
+          className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+          rows="4"
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="photoUpload"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Upload Photo
+        </label>
+        <input
+          id="photoUpload"
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          className="mt-2 p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-300"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 focus:ring focus:ring-blue-300"
+      >
+        Confirm Appointment
+      </button>
+    </form>
+  </div>
+  
+  
 
-      </form>
-    </div>
   );
+
+  function formatTimeRemaining(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  }
 };
 
 export default ConfirmSlot;

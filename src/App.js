@@ -26,6 +26,7 @@ import SideBar from './components/SideBar'; // Main app SideBar
 import TopBar from './components/TopBar'; // Main app TopBar
 import DoctorProfile from './components/DoctorProfile';
 import DoctorLogin from './components/login';
+import FilteredAppoinments from './components/filteredAppoinments';
 
 // Import Pharmacy Components
 import SideBar_pharmacy from './components/SideBar_pharmacy'; // Pharmacy SideBar
@@ -93,6 +94,7 @@ function AppContent() {
           <Route path="/summary" element={<PrescriptionSummary />} />
           <Route path="/doctor-profile" element={<DoctorProfile />} />
           <Route path="/doctor-login" element={<DoctorLogin />} />
+          <Route path="/newfilteredAppointment" element={<FilteredAppoinments />} />
 
           {/* Pharmacy Routes */}
           <Route path="/pharmacy/dashboard" element={<Dashboard_pharmacy />} />

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate for naviga
 import './ConfirmSlot.css';
 import Header from '../header1/header1';
 import emailjs from 'emailjs-com'; // Import EmailJS
+import Navbar from '../home/navbar/navbar';
 
 function Confirm() {
   const [accepted, setAccepted] = useState(false);
@@ -39,9 +40,9 @@ function Confirm() {
           setAppointmentDetails({
             doctorImage: latestAppointment.doctorPhotoUrl || 'path/to/placeholder-image.jpg',
             doctorName: latestAppointment.doctorName || 'N/A',
-            specialization: latestAppointment.doctorSpecialization || 'N/A',
+            specialization: latestAppointment.specialization || 'N/A',
             appointmentDate: latestAppointment.appointmentDate || 'N/A',
-            visitingTime: latestAppointment.visitingTime || 'N/A',
+            visitingTime: latestAppointment.appointmentTime || 'N/A',
           });
         } else {
           console.error('No appointments found!');
@@ -65,7 +66,7 @@ function Confirm() {
         }
         return prev - 1; // Decrease by 1 second
       });
-    }, [handleTimeout]);
+    }, 1000);
 
     return () => clearInterval(countdown); // Cleanup on component unmount
   }, []);
@@ -81,41 +82,14 @@ function Confirm() {
   const handleConfirmAppointment = async () => {
     if (accepted) {
       try {
-        const appointmentsCollection = collection(db, 'Appointments');
-        const appointmentsQuery = query(appointmentsCollection, orderBy('referenceNumber', 'desc'));
-        const appointmentsSnapshot = await getDocs(appointmentsQuery);
-        const appointmentsData = appointmentsSnapshot.docs.map(doc => doc.data());
-        
-        const latestReferenceNumber = appointmentsData.length > 0 ? Math.max(...appointmentsData.map(app => app.referenceNumber || 0)) : 0;
-      //  const newReferenceNumber = latestReferenceNumber + 1; // Increment for the new reference number
-
-        const appointmentData = {
-          appointmentNumber: appointmentNumber || 'N/A', // Match the exact field name
-          scheduleId: personalDetails.scheduleId || 'N/A', // Adjusted for compatibility
-          doctorName: appointmentDetails.doctorName || 'N/A',
-          specialization: appointmentDetails.specialization || 'N/A',
-          appointmentDate: appointmentDetails.appointmentDate || 'N/A',
-          visitingTime: appointmentDetails.visitingTime || 'N/A',
-          patientName: personalDetails.patientName || 'N/A', // Direct patient name
-          phone: personalDetails.phone || 'N/A',
-          nic: personalDetails.nic || 'N/A',
-          email: personalDetails.email || 'N/A',
-          gender: personalDetails.gender || 'N/A',
-          bloodGroup: personalDetails.bloodGroup || 'N/A',
-          address: personalDetails.address || 'N/A',
-        };
-
-        // Save the appointment data to Firestore
-        await addDoc(appointmentsCollection, appointmentData); // Add a new document to the collection
-
         // Prepare the notification data
         const notificationData = {
-          patientName: personalDetails.patientName, // Save the patient's name separately
-          doctorName: appointmentDetails.doctorName, // Save the doctor's name separately
-          appointmentDate: appointmentDetails.appointmentDate, // Save the appointment date separately
-          visitingTime: appointmentDetails.visitingTime, // Save the visiting time separately
-          appointmentNumber: appointmentNumber, // Save the appointment number separately
-          createdAt: new Date(), // Save the creation timestamp
+          patientName: personalDetails.patientName,
+          doctorName: appointmentDetails.doctorName,
+          appointmentDate: appointmentDetails.appointmentDate,
+          visitingTime: appointmentDetails.visitingTime,
+          appointmentNumber: appointmentNumber,
+          createdAt: new Date(),
         };
 
         // Save the notification to Firestore (in 'Notifications' collection)
@@ -124,16 +98,16 @@ function Confirm() {
 
         // Email sending logic using EmailJS
         const templateParams = {
-          patientName: personalDetails.patientName, // Patient's name
+          patientName: personalDetails.patientName,
           doctorName: appointmentDetails.doctorName,
-          appointment_date: appointmentDetails.appointmentDate,
+          appointmentDate: appointmentDetails.appointmentDate,
           appointmentNumber: appointmentNumber,
-          visitingTime: appointmentDetails.visitingTime,
-          doctorSpecialization: appointmentDetails.specialization,
-          email: personalDetails.email, 
+          updatedStartTime: appointmentDetails.visitingTime,
+          specialization: appointmentDetails.specialization,
+          user: personalDetails.email, 
         };
 
-        emailjs.send('service_bp6shxc', 'template_zihfxcv', templateParams, 'OdP_vbIDRBSVqEPG8')
+        emailjs.send('service_i9ex7wq', 'template_ag587il', templateParams, 'A91oWWrbRwEuHxKhD')
           .then((response) => {
             console.log('Email successfully sent!', response.status, response.text);
             setMessage('Appointment confirmed and email sent successfully!');
@@ -145,12 +119,10 @@ function Confirm() {
           });
 
         setMessage('Appointment confirmed successfully!');
-        window.alert("Awesome! Your booking is complete.");
         navigate('/'); // Navigate to home or another page after confirmation
       } catch (error) {
         console.error('Error confirming appointment:', error);
         setMessage('Error confirming appointment.');
-        window.alert("Oops! An error occurred. Please try again.");  
       }
     } else {
       setMessage('Appointment is unsuccessful. Please accept the terms and conditions');
@@ -158,106 +130,93 @@ function Confirm() {
   };
 
   return (
-   <div >
-    <Header />
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Confirm Time Slot</h2>
+    <div className="confirm-slot-container bg-gray-100 min-h-screen flex flex-col items-center py-8">
+  <Navbar />
 
-      {appointmentDetails && (
-        <div className="bg-gray-50 p-4 rounded-lg shadow-lg mb-6">
-          <div className="flex items-center space-x-4">
-            <img
-              src={appointmentDetails.doctorImage}
-              alt={appointmentDetails.doctorName}
-              className="w-20 h-20 rounded-full object-cover"
-            />
-            <div>
-              <h3 className="text-lg font-semibold text-gray-700">{appointmentDetails.doctorName}</h3>
-              <p className="text-sm text-gray-600">{appointmentDetails.specialization}</p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <p>
-              <strong className="text-gray-700">Appointment Date:</strong> {appointmentDetails.appointmentDate}
-            </p>
-            <p>
-              <strong className="text-gray-700">Visiting Time:</strong> {appointmentDetails.visitingTime}
-            </p>
-            <p>
-              <strong className="text-gray-700">Appointment Number:</strong>{' '}
-              {appointmentNumber || 'Loading...'}
-            </p>
-          </div>
-          <p className="text-red-500 mt-2">
-            Complete the booking within{' '}
-            <span className="font-bold">{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</span>{' '}
-            minutes to avoid cancellation.
+  <div className="confirm-slot-content bg-white p-8 rounded-xl shadow-xl w-full max-w-4xl mt-8">
+    <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Confirm Time Slot</h2>
+
+    {appointmentDetails && (
+      <div className="doctor-info-card flex flex-col md:flex-row items-start md:items-center md:space-x-8 mb-8 p-6 bg-gray-50 rounded-xl shadow-md">
+        <img
+          src={appointmentDetails.doctorImage}
+          alt={appointmentDetails.doctorName}
+          className="doctor-image w-32 h-32 rounded-full object-cover mb-4 md:mb-0"
+        />
+        <div className="doctor-details flex flex-col text-center md:text-left">
+          <h2 className="text-2xl font-semibold text-gray-800">{appointmentDetails.doctorName}</h2>
+          <p className="text-gray-600">{appointmentDetails.specialization}</p>
+        </div>
+        <div className="appointment-summary mt-4 md:mt-0 text-center md:text-right space-y-2">
+          <p className="text-lg font-medium text-blue-600">{appointmentDetails.appointmentDate}</p>
+          <p className="text-sm text-gray-600">Appointment Number: {appointmentNumber || 'Loading...'}</p>
+          <p className="appointment-warning text-sm text-red-600">
+            Complete the booking within the given time to avoid cancellation
+          </p>
+          <p className="appointment-time-left text-xl font-semibold mt-4 text-green-600">
+            {Math.floor(timer / 60)}:{String(timer % 60).padStart(2, '0')}
           </p>
         </div>
-      )}
-
-      <div className="bg-gray-50 p-4 rounded-lg shadow-lg mb-6">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4">Personal Details</h4>
-        {loading ? (
-          <p className="text-gray-500">Loading personal details...</p>
-        ) : personalDetails ? (
-          <div className="space-y-2">
-            <p><strong className="text-gray-700">Reference No:</strong> {appointmentNumber || 'N/A'}</p>
-            <p><strong className="text-gray-700">Patient's Name:</strong> {personalDetails.patientName || 'N/A'}</p>
-            <p><strong className="text-gray-700">Phone Number:</strong> {personalDetails.phone || 'N/A'}</p>
-            <p><strong className="text-gray-700">NIC:</strong> {personalDetails.nic || 'N/A'}</p>
-            <p><strong className="text-gray-700">Email:</strong> {personalDetails.email || 'N/A'}</p>
-            <p><strong className="text-gray-700">DOB:</strong> {personalDetails.dob || 'N/A'}</p>
-            <p><strong className="text-gray-700">Gender:</strong> {personalDetails.gender || 'N/A'}</p>
-            <p><strong className="text-gray-700">Blood Group:</strong> {personalDetails.bloodGroup || 'N/A'}</p>
-            <p><strong className="text-gray-700">Address:</strong> {personalDetails.address || 'N/A'}</p>
-            <p><strong className="text-gray-700">Allergies or Other:</strong> {personalDetails.allergies || '-'}</p>
-          </div>
-        ) : (
-          <p className="text-gray-500">No personal details available.</p>
-        )}
       </div>
+    )}
 
-      <div className="bg-gray-50 p-4 rounded-lg shadow-lg mb-6">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4">Terms and Conditions</h4>
-        <ul className="list-disc list-inside text-gray-700 mb-4">
+    <div className=" mb-8 p-6 bg-slate-200 rounded-xl shadow-md">
+      <h4 className="text-2xl font-semibold text-gray-800 mb-4">Personal Details:</h4>
+      {loading ? (
+        <p className="text-gray-600">Loading personal details...</p>
+      ) : personalDetails ? (
+        <div className="space-y-4 text-gray-700">
+          <p><strong>Reference No:</strong> {appointmentNumber || 'N/A'}</p>
+          <p><strong>Patient's Name:</strong> {personalDetails.patientName || 'N/A'}</p>
+          <p><strong>Phone Number:</strong> {personalDetails.phone || 'N/A'}</p>
+          <p><strong>NIC:</strong> {personalDetails.nic || 'N/A'}</p>
+          <p><strong>Email:</strong> {personalDetails.email || 'N/A'}</p>
+          <p><strong>DOB:</strong> {personalDetails.dob || 'N/A'}</p>
+          <p><strong>Gender:</strong> {personalDetails.gender || 'N/A'}</p>
+          <p><strong>Blood Group:</strong> {personalDetails.bloodGroup || 'N/A'}</p>
+          <p><strong>Address:</strong> {personalDetails.address || 'N/A'}</p>
+          <p><strong>Allergies or Other:</strong> {personalDetails.allergies || '-'}</p>
+        </div>
+      ) : (
+        <p className="text-gray-600">No personal details available.</p>
+      )}
+    </div>
+
+    <div className="terms-and-conditions mb-8 p-6 bg-gray-50 rounded-xl shadow-md">
+      <h4 className="text-2xl font-semibold text-gray-800 mb-4">Terms and Conditions</h4>
+      <p className="text-gray-600 mb-4">
+        By confirming your appointment, you agree to the following terms and conditions:
+        <ul className="list-disc pl-5 mt-2 text-gray-700">
           <li>You must arrive on time for your scheduled appointment.</li>
           <li>If you need to cancel or reschedule, please do so at least 24 hours in advance.</li>
-          <li>All personal information will be kept confidential.</li>
-          <li>Our clinic is not responsible for missed appointments due to late arrivals.</li>
+          <li>Failure to attend your appointment may result in a cancellation fee.</li>
         </ul>
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="accept-terms"
-            checked={accepted}
-            onChange={handleAcceptTerms}
-            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <label htmlFor="accept-terms" className="text-gray-700">
-            I accept the terms and conditions.
-          </label>
-        </div>
-      </div>
-
-      <div className="text-center mb-4">
-        <p className="text-red-500">{message}</p>
-      </div>
-
-      <div className="text-center">
-        <button
-          onClick={handleConfirmAppointment}
-          disabled={loading || !accepted}
-          className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md ${
-            accepted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-          }`}
-        >
-          Confirm Appointment
-        </button>
-      </div>
+      </p>
+      <label className="inline-flex items-center mt-4">
+        <input
+          type="checkbox"
+          checked={accepted}
+          onChange={handleAcceptTerms}
+          className="form-checkbox text-blue-600"
+        />
+        <span className="ml-2 text-gray-600">I accept the terms and conditions.</span>
+      </label>
     </div>
+
+    {message && <p className="confirmation-message text-green-600 text-lg font-semibold mt-4">{message}</p>}
+
+    <button
+      onClick={handleConfirmAppointment}
+      disabled={!accepted || loading}
+      className="mt-6 w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg disabled:bg-gray-400"
+    >
+      Confirm Appointment
+    </button>
   </div>
-);
+</div>
+
+  
+  );
 }
 
 export default Confirm;
