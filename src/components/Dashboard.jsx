@@ -4,7 +4,8 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import icon1 from '../components/assets/1.jpg';
+import patient from '../components/assets/patient.png';
+import prescription from '../components/assets/prescription.png';
 
 const Dashboard = () => {
   const location = useLocation();
@@ -79,12 +80,12 @@ const Dashboard = () => {
         <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
           <h3 className="text-lg font-semibold text-gray-700">Appointments Today</h3>
           <p className="text-2xl font-bold text-blue-600">{appointmentsToday}</p>
-          <img src={icon1} alt="icon" className="w-16 h-16 mt-2" />
+          <img src={prescription} alt="icon" className="w-16 h-16 mt-2" />
         </div>
         <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
           <h3 className="text-lg font-semibold text-gray-700">Total Appointments</h3>
           <p className="text-2xl font-bold text-blue-600">{totalAppointments}</p>
-          <img src="icon2.png" alt="icon" className="w-16 h-16 mt-2" />
+          <img src={prescription} alt="icon" className="w-16 h-16 mt-2" />
         </div>
       </div>
 
