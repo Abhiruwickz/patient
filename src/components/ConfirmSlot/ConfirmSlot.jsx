@@ -101,7 +101,7 @@ function Confirm() {
           patientName: personalDetails.patientName,
           doctorName: appointmentDetails.doctorName,
           appointmentDate: appointmentDetails.appointmentDate,
-          appointmentNumber: appointmentNumber,
+          appointmentNumber: appointmentDetails.appointmentNumber,
           updatedStartTime: appointmentDetails.visitingTime,
           specialization: appointmentDetails.specialization,
           user: personalDetails.email, 
