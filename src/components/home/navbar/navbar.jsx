@@ -35,25 +35,25 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="absolute top-0 left-0 w-full bg-blue-100 text-black font-semibold flex items-center justify-between px-3 py-4 shadow-lg h-[  ">
+    <nav className="absolute top-0 left-0 w-full bg-blue-100 flex items-center justify-between px-3 py-4 shadow-lg font-semibold ">
       {/* Logo */}
       <div className="flex items-center">
-        <img src={logo1} alt="MediConnect" className="h-10 W-10 mr-4" />
-       
+        <img src={logo1} alt="MediConnect" className="h-10 mr-4" />
+        <span className="font-bold text-lg text-blue-600">MediConnect</span>
       </div>
 
       {/* Navigation Links */}
-      <div className="hidden md:flex space-x-20 text-lg">
-        <Link to="/" className="hover:text-white">
+      <div className="hidden md:flex space-x-10 text-black">
+        <Link to="/" className="hover:text-gray-200">
           Home
         </Link>
-        <Link to="/doctors" className="hover:text-white">
+        <Link to="/doctors" className="hover:text-blue-200">
           Meet Your Doctor
         </Link>
-        <Link to="/about" className="hover:text-white">
+        <Link to="/about" className="hover:text-blue-200">
           About Us
         </Link>
-        <Link to="/map" className="hover:text-white">
+        <Link to="/map" className="hover:text-blue-200">
           Contact Us
         </Link>
       </div>

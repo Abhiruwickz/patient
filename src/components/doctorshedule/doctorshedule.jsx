@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { doc, getDoc, collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import Footer from "../footer/footer";
-import Header from "../header1/header1";
+
+import Navbar from "../home/navbar/navbar";
 
 const DoctorSchedule = () => {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ const DoctorSchedule = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      <Header />
+      <Navbar />
       <div className="flex flex-col items-center px-4 py-8">
         {/* Doctor Info */}
         <div className="flex w-full max-w-5xl bg-white shadow-lg rounded-lg p-6 items-center">
