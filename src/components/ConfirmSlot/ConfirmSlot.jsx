@@ -65,7 +65,7 @@ function Confirm() {
         }
         return prev - 1; // Decrease by 1 second
       });
-    }, 1000);
+    }, [handleTimeout]);
 
     return () => clearInterval(countdown); // Cleanup on component unmount
   }, []);
@@ -87,28 +87,22 @@ function Confirm() {
         const appointmentsData = appointmentsSnapshot.docs.map(doc => doc.data());
         
         const latestReferenceNumber = appointmentsData.length > 0 ? Math.max(...appointmentsData.map(app => app.referenceNumber || 0)) : 0;
-        const newReferenceNumber = latestReferenceNumber + 1; // Increment for the new reference number
+      //  const newReferenceNumber = latestReferenceNumber + 1; // Increment for the new reference number
 
         const appointmentData = {
-          referenceNumber: newReferenceNumber,
-          doctorPhotoUrl: appointmentDetails.doctorImage,
-          doctorName: appointmentDetails.doctorName,
-          doctorSpecialization: appointmentDetails.specialization,
-          appointmentDate: appointmentDetails.appointmentDate,
-          visitingTime: appointmentDetails.visitingTime,
-          patientDetails: {
-            name: personalDetails.patientName || 'N/A',
-            phone: personalDetails.phone || 'N/A',
-            nic: personalDetails.nic || 'N/A',
-            email: personalDetails.email || 'N/A',
-            dob: personalDetails.dob || 'N/A',
-            gender: personalDetails.gender || 'N/A',
-            bloodGroup: personalDetails.bloodGroup || 'N/A',
-            address: personalDetails.address || 'N/A',
-            allergies: personalDetails.allergies || '-',
-          },
-          appointmentNumber: appointmentNumber, // Store the appointment number
-          createdAt: new Date(), // Save the creation timestamp
+          appointmentNumber: appointmentNumber || 'N/A', // Match the exact field name
+          scheduleId: personalDetails.scheduleId || 'N/A', // Adjusted for compatibility
+          doctorName: appointmentDetails.doctorName || 'N/A',
+          specialization: appointmentDetails.specialization || 'N/A',
+          appointmentDate: appointmentDetails.appointmentDate || 'N/A',
+          visitingTime: appointmentDetails.visitingTime || 'N/A',
+          patientName: personalDetails.patientName || 'N/A', // Direct patient name
+          phone: personalDetails.phone || 'N/A',
+          nic: personalDetails.nic || 'N/A',
+          email: personalDetails.email || 'N/A',
+          gender: personalDetails.gender || 'N/A',
+          bloodGroup: personalDetails.bloodGroup || 'N/A',
+          address: personalDetails.address || 'N/A',
         };
 
         // Save the appointment data to Firestore
@@ -151,10 +145,12 @@ function Confirm() {
           });
 
         setMessage('Appointment confirmed successfully!');
+        window.alert("Awesome! Your booking is complete.");
         navigate('/'); // Navigate to home or another page after confirmation
       } catch (error) {
         console.error('Error confirming appointment:', error);
         setMessage('Error confirming appointment.');
+        window.alert("Oops! An error occurred. Please try again.");  
       }
     } else {
       setMessage('Appointment is unsuccessful. Please accept the terms and conditions');
@@ -162,84 +158,106 @@ function Confirm() {
   };
 
   return (
-    <div className="confirm-slot-container">
-      <Header />
+   <div >
+    <Header />
+    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 mt-10">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Confirm Time Slot</h2>
 
-      <div className="confirm-slot-content">
-        <h2>Confirm Time Slot</h2>
-
-        {appointmentDetails && (
-          <div className="doctor-info-card">
-            <img src={appointmentDetails.doctorImage} alt={appointmentDetails.doctorName} className="doctor-image" />
-            <div className="doctor-details">
-              <h2>{appointmentDetails.doctorName}</h2>
-              <p>{appointmentDetails.specialization}</p>
-            </div>
-            <div className="appointment-summary">
-              <p><strong>{appointmentDetails.appointmentDate}</strong></p>
-              <p>Appointment Number: {appointmentNumber || 'Loading...'}</p>
-              <p className="appointment-warning">Complete the booking within the given time to avoid cancellation</p>
-              <p className="appointment-time-left">{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</p>
-            </div>
-          </div>
-        )}
-
-        <div className="patient-details">
-          <h4>Personal Details</h4>
-          {loading ? (
-            <p>Loading personal details...</p>
-          ) : personalDetails ? (
-            <>
-              <p><strong>Reference No:</strong> {appointmentNumber || 'N/A'}</p>
-              <p><strong>Patient's Name:</strong> {personalDetails.patientName || 'N/A'}</p>
-              <p><strong>Phone Number:</strong> {personalDetails.phone || 'N/A'}</p>
-              <p><strong>NIC:</strong> {personalDetails.nic || 'N/A'}</p>
-              <p><strong>Email:</strong> {personalDetails.email || 'N/A'}</p>
-              <p><strong>DOB:</strong> {personalDetails.dob || 'N/A'}</p>
-              <p><strong>Gender:</strong> {personalDetails.gender || 'N/A'}</p>
-              <p><strong>Blood Group:</strong> {personalDetails.bloodGroup || 'N/A'}</p>
-              <p><strong>Address:</strong> {personalDetails.address || 'N/A'}</p>
-              <p><strong>Allergies or Other:</strong> {personalDetails.allergies || '-'}</p>
-            </>
-          ) : (
-            <p>No personal details available.</p>
-          )}
-        </div>
-
-        <div className="terms-and-conditions">
-          <h4>Terms and Conditions</h4>
-          <p>
-            By confirming your appointment, you agree to the following terms and conditions:
-            <ul>
-              <li>You must arrive on time for your scheduled appointment.</li>
-              <li>If you need to cancel or reschedule, please do so at least 24 hours in advance.</li>
-              <li>All personal information will be kept confidential.</li>
-              <li>Our clinic is not responsible for missed appointments due to late arrivals.</li>
-            </ul>
-          </p>
-          <div>
-            <input 
-              type="checkbox" 
-              id="accept-terms" 
-              checked={accepted} 
-              onChange={handleAcceptTerms} 
+      {appointmentDetails && (
+        <div className="bg-gray-50 p-4 rounded-lg shadow-lg mb-6">
+          <div className="flex items-center space-x-4">
+            <img
+              src={appointmentDetails.doctorImage}
+              alt={appointmentDetails.doctorName}
+              className="w-20 h-20 rounded-full object-cover"
             />
-            <label htmlFor="accept-terms">
-              I accept the terms and conditions.
-            </label>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700">{appointmentDetails.doctorName}</h3>
+              <p className="text-sm text-gray-600">{appointmentDetails.specialization}</p>
+            </div>
           </div>
+          <div className="mt-4">
+            <p>
+              <strong className="text-gray-700">Appointment Date:</strong> {appointmentDetails.appointmentDate}
+            </p>
+            <p>
+              <strong className="text-gray-700">Visiting Time:</strong> {appointmentDetails.visitingTime}
+            </p>
+            <p>
+              <strong className="text-gray-700">Appointment Number:</strong>{' '}
+              {appointmentNumber || 'Loading...'}
+            </p>
+          </div>
+          <p className="text-red-500 mt-2">
+            Complete the booking within{' '}
+            <span className="font-bold">{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</span>{' '}
+            minutes to avoid cancellation.
+          </p>
         </div>
+      )}
 
-        <div className="confirmation-message">
-          <p>{message}</p>
+      <div className="bg-gray-50 p-4 rounded-lg shadow-lg mb-6">
+        <h4 className="text-lg font-semibold text-gray-800 mb-4">Personal Details</h4>
+        {loading ? (
+          <p className="text-gray-500">Loading personal details...</p>
+        ) : personalDetails ? (
+          <div className="space-y-2">
+            <p><strong className="text-gray-700">Reference No:</strong> {appointmentNumber || 'N/A'}</p>
+            <p><strong className="text-gray-700">Patient's Name:</strong> {personalDetails.patientName || 'N/A'}</p>
+            <p><strong className="text-gray-700">Phone Number:</strong> {personalDetails.phone || 'N/A'}</p>
+            <p><strong className="text-gray-700">NIC:</strong> {personalDetails.nic || 'N/A'}</p>
+            <p><strong className="text-gray-700">Email:</strong> {personalDetails.email || 'N/A'}</p>
+            <p><strong className="text-gray-700">DOB:</strong> {personalDetails.dob || 'N/A'}</p>
+            <p><strong className="text-gray-700">Gender:</strong> {personalDetails.gender || 'N/A'}</p>
+            <p><strong className="text-gray-700">Blood Group:</strong> {personalDetails.bloodGroup || 'N/A'}</p>
+            <p><strong className="text-gray-700">Address:</strong> {personalDetails.address || 'N/A'}</p>
+            <p><strong className="text-gray-700">Allergies or Other:</strong> {personalDetails.allergies || '-'}</p>
+          </div>
+        ) : (
+          <p className="text-gray-500">No personal details available.</p>
+        )}
+      </div>
+
+      <div className="bg-gray-50 p-4 rounded-lg shadow-lg mb-6">
+        <h4 className="text-lg font-semibold text-gray-800 mb-4">Terms and Conditions</h4>
+        <ul className="list-disc list-inside text-gray-700 mb-4">
+          <li>You must arrive on time for your scheduled appointment.</li>
+          <li>If you need to cancel or reschedule, please do so at least 24 hours in advance.</li>
+          <li>All personal information will be kept confidential.</li>
+          <li>Our clinic is not responsible for missed appointments due to late arrivals.</li>
+        </ul>
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="accept-terms"
+            checked={accepted}
+            onChange={handleAcceptTerms}
+            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="accept-terms" className="text-gray-700">
+            I accept the terms and conditions.
+          </label>
         </div>
+      </div>
 
-        <button onClick={handleConfirmAppointment} disabled={loading || !accepted}>
+      <div className="text-center mb-4">
+        <p className="text-red-500">{message}</p>
+      </div>
+
+      <div className="text-center">
+        <button
+          onClick={handleConfirmAppointment}
+          disabled={loading || !accepted}
+          className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md ${
+            accepted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
+          }`}
+        >
           Confirm Appointment
         </button>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default Confirm;

@@ -204,95 +204,167 @@ const ConfirmSlot = () => {
   </div>
 </div>
 
+<form onSubmit={handleSubmit} className="space-y-6">
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="patientName" className="block text-sm font-medium text-gray-700">
+        Patient Name
+      </label>
+      <input
+        id="patientName"
+        type="text"
+        name="patientName"
+        placeholder="Enter full name"
+        value={formData.patientName}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      />
+    </div>
+    <div>
+      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        Email
+      </label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        placeholder="example@example.com"
+        value={formData.email}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      />
+    </div>
+  </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="patientName"
-            placeholder="Patient Name"
-            value={formData.patientName}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-        </div>
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+        Phone
+      </label>
+      <input
+        id="phone"
+        type="text"
+        name="phone"
+        placeholder="Enter phone number"
+        value={formData.phone}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      />
+    </div>
+    <div>
+      <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700">
+        Blood Group
+      </label>
+      <input
+        id="bloodGroup"
+        type="text"
+        name="bloodGroup"
+        placeholder="e.g., O+"
+        value={formData.bloodGroup}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      />
+    </div>
+  </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="bloodGroup"
-            placeholder="Blood Group"
-            value={formData.bloodGroup}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-        </div>
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="nic" className="block text-sm font-medium text-gray-700">
+        NIC
+      </label>
+      <input
+        id="nic"
+        type="text"
+        name="nic"
+        placeholder="Enter NIC"
+        value={formData.nic}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      />
+    </div>
+    <div>
+      <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+        Gender
+      </label>
+      <select
+        id="gender"
+        name="gender"
+        value={formData.gender}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      >
+        <option value="" disabled>
+          Select Gender
+        </option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div>
+      <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+        Date of Birth
+      </label>
+      <input
+        id="dob"
+        type="date"
+        name="dob"
+        value={formData.dob}
+        onChange={handleChange}
+        className="p-2 border rounded-md w-full"
+        required
+      />
+    </div>
+    <div>
+      <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
+        Upload Photo
+      </label>
+      <input
+        id="photo"
+        type="file"
+        onChange={handlePhotoUpload}
+        className="p-2 border rounded-md w-full"
+      />
+    </div>
+  </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="nic"
-            placeholder="NIC"
-            value={formData.nic}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="gender"
-            placeholder="Gender"
-            value={formData.gender}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-          <input
-            type="date"
-            name="dob"
-            placeholder="Date of Birth"
-            value={formData.dob}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            required
-          />
-          <input
-            type="file"
-            onChange={handlePhotoUpload}
-            className="p-2 border rounded-md"
-          />
-        </div>
+  <div>
+    <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+      Address
+    </label>
+    <textarea
+      id="address"
+      name="address"
+      placeholder="Enter your address"
+      value={formData.address}
+      onChange={handleChange}
+      className="p-2 border rounded-md w-full"
+      rows="2"
+      required
+    />
+  </div>
 
-        <div className="grid grid-cols-1">
-          <textarea
-            name="allergies"
-            placeholder="Allergies (if any)"
-            value={formData.allergies}
-            onChange={handleChange}
-            className="p-2 border rounded-md"
-            rows="4"
-          />
-        </div>
+  <div>
+    <label htmlFor="allergies" className="block text-sm font-medium text-gray-700">
+      Allergies (if any)
+    </label>
+    <textarea
+      id="allergies"
+      name="allergies"
+      placeholder="List any allergies"
+      value={formData.allergies}
+      onChange={handleChange}
+      className="p-2 border rounded-md w-full"
+      rows="4"
+    />
+  </div>
+
         <div className="flex justify-between mb-4">
           <div>
             <button

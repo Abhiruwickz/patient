@@ -130,7 +130,7 @@ const DoctorGrid = () => {
                       className="bg-white rounded-lg shadow-lg hover:shadow-xl cursor-pointer p-4 "
                       onClick={() => handleDoctorClick(doctor.id)}
                     >
-                      <div className="w-full h-60 relative">
+                      <div className="w-full h-80 relative">
                         <img
                           src={doctor.imageUrl || '/placeholder-image.png'}
                           alt={doctor.name}

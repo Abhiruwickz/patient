@@ -7,7 +7,7 @@ const Notification = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Set up a real-time listener for notifications
   useEffect(() => {
