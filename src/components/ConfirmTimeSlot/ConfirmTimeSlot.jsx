@@ -32,6 +32,7 @@ const ConfirmSlot = () => {
     allergies: "",
     photo: null,
   });
+  
 
   const [appointmentDetails, setAppointmentDetails] = useState({
     visitingTime: "",
@@ -168,118 +169,157 @@ const ConfirmSlot = () => {
       }
     };
 
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Generate appointment number
-      const appointmentNumber = await generateAppointmentNumber(doctorId, scheduleId);
-      if (!appointmentNumber) {
-        throw new Error("Failed to generate appointment number.");
-      }
-  
-      // Generate reference number for the patient
-      const refNo = await generateReferenceNo();
-  
-      let photoUrl = formData.photo;
-  
-      // Retrieve the relevant schedule
-      const scheduleDocRef = doc(db, "schedule", doctorId, "schedules", scheduleId);
-      const scheduleDoc = await getDoc(scheduleDocRef);
-  
-      if (!scheduleDoc.exists()) {
-        alert("Schedule not found. Please try again.");
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+    
+      // Validate NIC format
+      const nicRegex = /^(?:\d{9}[VX]|\d{12})$/; // 10 digits with 'V' or 'X' or 12 digits
+      if (!nicRegex.test(formData.nic)) {
+        alert("Invalid NIC. Please enter a valid NIC number.");
         return;
       }
-  
-      const scheduleData = scheduleDoc.data();
-  
-      // Check if the schedule is almost fully booked
-      const [startHour, startMinutes, startPeriod] = parseTime(scheduleData.startTime);
-      const [endHour, endMinutes, endPeriod] = parseTime(scheduleData.endTime);
-  
-      if (
-        convertTo24HourFormat(startHour, startMinutes, startPeriod) >=
-        convertTo24HourFormat(endHour, endMinutes, endPeriod)
-      ) {
-        alert("Sorry, cannot complete your appointment because this schedule is almost fully booked.");
+    
+      // Validate phone number format (Sri Lankan phone number format)
+      const phoneRegex = /^(\+94|0)?7[0-9]{8}$/; // Validates Sri Lankan phone numbers
+      if (!phoneRegex.test(formData.phone)) {
+        alert("Invalid phone number. Please enter a valid phone number.");
         return;
       }
-  
-      // Increment startTime by 6 minutes
-      const updatedStartTime = addMinutesToTime(startHour, startMinutes, startPeriod, 6);
-  
-      // Update the schedule's startTime
-      await setDoc(
-        scheduleDocRef,
-        { startTime: updatedStartTime },
-        { merge: true }
-      );
-  
-      // Save the patient details
-      const patientData = {
-        referenceNo: refNo,
-        name: formData.patientName,
-        phone: formData.phone,
-        gender: formData.gender,
-        nic: formData.nic,
-        email: formData.email,
-        bloodGroup: formData.bloodGroup,
-        address: formData.address,
-        dob: formData.dob,
-        allergies: formData.allergies || "Appointed Patient", // Add default value if allergies is not provided
-      };
-  
-      await setDoc(doc(db, "Patients", refNo), patientData);
-  
-      // Save the appointment details
-      await setDoc(doc(db, "Appointments", appointmentNumber), {
-        patientName: formData.patientName,
-        email: formData.email,
-        phone: formData.phone,
-        bloodGroup: formData.bloodGroup,
-        gender: formData.gender,
-        nic: formData.nic,
-        address: formData.address,
-        dob: formData.dob,
-        allergies: formData.allergies,
-        doctorId,
-        doctorName,
-        appointmentNumber,
-        visitingTime: appointmentDetails.visitingTime,
-        appointmentDate: appointmentDetails.appointmentDate,
-        createdAt: serverTimestamp(),
-        photo: photoUrl,
-        doctorPhotoUrl,
-        specialization,
-        scheduleId,
-        appointmentTime: updatedStartTime,
-      });
-  
-      console.log("Appointment and patient successfully saved");
-  
-      // Clear form data
-      setFormData({
-        patientName: "",
-        email: "",
-        phone: "",
-        bloodGroup: "",
-        gender: "",
-        nic: "",
-        address: "",
-        dob: "",
-        allergies: "",
-        photo: "",
-      });
-  
-      clearInterval(timerRef.current);
-      navigate("/confirm");
-    } catch (error) {
-      console.error("Error saving appointment or patient:", error);
-      alert("An error occurred while saving the appointment. Please try again.");
-    }
-  };
-  
+    
+      // Validate Date of Birth (DOB) - Ensure the date is in the correct format (YYYY-MM-DD)
+      const dobRegex = /^\d{4}-\d{2}-\d{2}$/; // Checks if DOB is in YYYY-MM-DD format
+      if (!dobRegex.test(formData.dob)) {
+        alert("Invalid Date of Birth. Please enter a valid DOB in the format YYYY-MM-DD.");
+        return;
+      }
+    
+      // Check if the age is above 18 years
+      const birthDate = new Date(formData.dob);
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+      const monthDifference = currentDate.getMonth() - birthDate.getMonth();
+      const dayDifference = currentDate.getDate() - birthDate.getDate();
+    
+      // Adjust age if the birthday hasn't occurred yet this year
+      if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+        age--;
+      }
+    
+      if (age < 18) {
+        alert("You must be at least 18 years old to complete the appointment.");
+        return;
+      }
+    
+      try {
+        // Generate appointment number
+        const appointmentNumber = await generateAppointmentNumber(doctorId, scheduleId);
+        if (!appointmentNumber) {
+          throw new Error("Failed to generate appointment number.");
+        }
+    
+        // Generate reference number for the patient
+        const refNo = await generateReferenceNo();
+    
+        let photoUrl = formData.photo;
+    
+        // Retrieve the relevant schedule
+        const scheduleDocRef = doc(db, "schedule", doctorId, "schedules", scheduleId);
+        const scheduleDoc = await getDoc(scheduleDocRef);
+    
+        if (!scheduleDoc.exists()) {
+          alert("Schedule not found. Please try again.");
+          return;
+        }
+    
+        const scheduleData = scheduleDoc.data();
+    
+        // Check if the schedule is almost fully booked
+        const [startHour, startMinutes, startPeriod] = parseTime(scheduleData.startTime);
+        const [endHour, endMinutes, endPeriod] = parseTime(scheduleData.endTime);
+    
+        if (
+          convertTo24HourFormat(startHour, startMinutes, startPeriod) >=
+          convertTo24HourFormat(endHour, endMinutes, endPeriod)
+        ) {
+          alert("Sorry, cannot complete your appointment because this schedule is almost fully booked.");
+          return;
+        }
+    
+        // Increment startTime by 6 minutes
+        const updatedStartTime = addMinutesToTime(startHour, startMinutes, startPeriod, 6);
+    
+        // Update the schedule's startTime
+        await setDoc(
+          scheduleDocRef,
+          { startTime: updatedStartTime },
+          { merge: true }
+        );
+    
+        // Save the patient details
+        const patientData = {
+          referenceNo: refNo,
+          name: formData.patientName,
+          phone: formData.phone,
+          gender: formData.gender,
+          nic: formData.nic,
+          email: formData.email,
+          bloodGroup: formData.bloodGroup,
+          address: formData.address,
+          dob: formData.dob,
+          allergies: formData.allergies || "Appointed Patient", // Add default value if allergies is not provided
+        };
+    
+        await setDoc(doc(db, "Patients", refNo), patientData);
+    
+        // Save the appointment details
+        await setDoc(doc(db, "Appointments", appointmentNumber), {
+          patientName: formData.patientName,
+          email: formData.email,
+          phone: formData.phone,
+          bloodGroup: formData.bloodGroup,
+          gender: formData.gender,
+          nic: formData.nic,
+          address: formData.address,
+          dob: formData.dob,
+          allergies: formData.allergies,
+          doctorId,
+          doctorName,
+          appointmentNumber,
+          visitingTime: appointmentDetails.visitingTime,
+          appointmentDate: appointmentDetails.appointmentDate,
+          createdAt: serverTimestamp(),
+          photo: photoUrl,
+          doctorPhotoUrl,
+          specialization,
+          scheduleId,
+          appointmentTime: updatedStartTime,
+        });
+    
+        console.log("Appointment and patient successfully saved");
+    
+        // Clear form data
+        setFormData({
+          patientName: "",
+          email: "",
+          phone: "",
+          bloodGroup: "",
+          gender: "",
+          nic: "",
+          address: "",
+          dob: "",
+          allergies: "",
+          photo: "",
+        });
+    
+        clearInterval(timerRef.current);
+        navigate("/confirm");
+      } catch (error) {
+        console.error("Error saving appointment or patient:", error);
+        alert("An error occurred while saving the appointment. Please try again.");
+      }
+    };
+    
+    
 
     // Helper functions
     const parseTime = (timeString) => {
@@ -307,6 +347,7 @@ const ConfirmSlot = () => {
       const finalHours = updatedHours % 12 || 12;
       return `${String(finalHours).padStart(2, '0')}:${String(updatedMinutes).padStart(2, '0')} ${updatedPeriod}`;
     };
+    
   
 
   return (
